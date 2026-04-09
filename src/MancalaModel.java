@@ -1,23 +1,35 @@
+import java.util.ArrayList;
+
 public class MancalaModel {
     // constants
-    private static int DEFAULT_STARTING_STONES = 4;
-    private static int HOLES_PER_SIDE = 6;
+    private final static int DEFAULT_STARTING_STONES = 4;
+    private final static int DEFAULT_HOLES_PER_SIDE = 6;
 
     // state of the board
+    private final int startingStones;
+    private final int numHoles;
     private int endP1 = 0;
     private int endP2 = 0;
-    final private int[] sideP1 = new int[HOLES_PER_SIDE];
-    final private int[] sideP2 = new int[HOLES_PER_SIDE];
+    final private ArrayList<Integer> sideP1 = new ArrayList<>();
+    final private ArrayList<Integer> sideP2 = new ArrayList<>();
 
     public MancalaModel() {
-        initBoard();
+        this.startingStones = DEFAULT_STARTING_STONES;
+        this.numHoles = DEFAULT_HOLES_PER_SIDE;
+        this.initBoard();
     }
 
+    /**
+     * Initialize the board; allows for board resetting. <p>
+     * Postcondition: Clears the stones from the end (sets to 0 stones) and fills all the
+     * stones to 0.
+     */
     public void initBoard() {
-        endP1 = 0; endP2 = 0;
-        for (int i = 0; i < HOLES_PER_SIDE; i++) {
-            sideP1[i] = DEFAULT_STARTING_STONES;
-            sideP2[i] = DEFAULT_STARTING_STONES;
+        this.endP1 = 0; this.endP2 = 0;
+        this.sideP1.clear(); this.sideP2.clear();
+        for (int i = 0; i < this.numHoles; i++) {
+            this.sideP1.add(this.startingStones);
+            this.sideP2.add(this.startingStones);
         }
     }
 
@@ -29,14 +41,14 @@ public class MancalaModel {
      * @throws IllegalArgumentException if player or hole_number arguments are invalid.
      */
     public int getStonesFromHole(int player, int hole_number) {
-        if (hole_number < 1 || hole_number > HOLES_PER_SIDE) {
+        if (hole_number < 1 || hole_number > this.numHoles) {
             throw new IllegalArgumentException("Invalid hole number #" + hole_number +
-                    "; must be between 1 and " + HOLES_PER_SIDE + " inclusive.");
+                    "; must be between 1 and " + this.numHoles + " inclusive.");
         }
 
         return switch (player) {
-            case 1 -> sideP1[hole_number];
-            case 2 -> sideP2[hole_number];
+            case 1 -> this.sideP1.get(hole_number);
+            case 2 -> this.sideP2.get(hole_number);
             default -> throw new IllegalArgumentException("Invalid player argument; must be 1 or 2.");
         };
     }
@@ -49,8 +61,8 @@ public class MancalaModel {
      */
     public int getStonesFromEnd(int player) {
         return switch (player) {
-            case 1 -> endP1;
-            case 2 -> endP2;
+            case 1 -> this.endP1;
+            case 2 -> this.endP2;
             default -> throw new IllegalArgumentException("Invalid player argument; must be 1 or 2.");
         };
     }
