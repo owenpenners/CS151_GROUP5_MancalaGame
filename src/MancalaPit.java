@@ -3,7 +3,7 @@ public class MancalaPit {
 
     public int getStones() { return this.stones; }
     public void addStone() { this.stones++; }
-    public void addStone(int stones) { this.stones += stones; }
+    public void addStones(int stones) { this.stones += stones; }
     public void reset() { this.stones = 0; }
 
     public int grabStones() throws IllegalArgumentException{
