@@ -99,6 +99,9 @@ public class MancalaModel {
     }
 
     /**
+     * Given a selected pit number of the current player's turn, grab all the stones and distribute it across
+     * the pits. If the last mancala was dropped in the pit
+     *
      * @throws IllegalArgumentException if pit selected has no stones in it
      */
     public void moveStones(int pitNumber) throws IllegalArgumentException {
