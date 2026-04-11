@@ -38,13 +38,14 @@ public class MancalaModel {
      * Fill the pits in
      * Postcondition: Clears the stones from the end (sets to 0 stones) and fills all the
      * stones to 0.
+     * @param startingStones - initial amount of stones
      */
-    public void fillPits(int stones) {
+    public void fillPits(int startingStones) {
         currentPlayer = Player.PLAYER_1;
         for (Player player: sides.keySet())
             for (int i = 0; i < PITS_PER_SIDE; i++) { //ignore ends
                 MancalaPit pit = sides.get(player).get(i);
-                pit.addStones(stones);
+                pit.addStones(startingStones);
             }
     }
 
