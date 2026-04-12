@@ -85,7 +85,9 @@ public class MancalaModel {
      * Returns the current player.
      * @return {@code Player} whose turn it is.
      */
-    public Player getCurrentPlayer() { return this.currentPlayer; }
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
 
     /**
      * Static function that returns the opposite player.

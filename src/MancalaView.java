@@ -60,14 +60,10 @@ public class MancalaView extends JFrame {
     private JButton[] createPitRow(JPanel panel) {
         JButton[] buttons = new JButton[6];
 
-        for(int i = 0;i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             buttons[i] = new JButton();
             panel.add(buttons[i]);
         }
         return buttons;
     }
-// for testing
-//    public static void main(String[] args){
-//        MancalaView view = new MancalaView();
-//    }
 }
