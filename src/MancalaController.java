@@ -12,6 +12,7 @@
  */
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MancalaController {
@@ -22,9 +23,43 @@ public class MancalaController {
     this.model = model;
     this.view = view;
 
+    model.fillPits(4); // need to prompt users for number of stones in pit 3 or 4.
+
     // Future work:
     // - Attach listeners to pit buttons
     // - Handle user clicks
     // - Update the view after each move
-}
+    this.view.addPitListeners(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String cmd = e.getActionCommand();
+
+            if(cmd.startsWith("P2_")) {
+                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
+                System.out.println("Player 2 clicked " + pit);
+                // call moveStones
+                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
+                //model.moveStones(pit);
+            } else if(cmd.startsWith("P1_")) {
+                int pit = Integer.parseInt(cmd.substring(3));
+                System.out.println("Player 1 clicked " + pit);
+                // call moveStones
+                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
+                //model.moveStones(pit);
+            }
+            refreshBoard();
+        }
+    });
+    }
+
+    /**
+     * Refresh the mancala board by getting pit counts
+     */
+    public void refreshBoard() {
+        int[] player2PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_2);
+        int[] player1PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_1);
+
+        System.out.println("Player A Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_1));
+        System.out.println("Player B Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_2));
+    }
 }

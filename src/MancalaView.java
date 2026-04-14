@@ -1,9 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class MancalaView extends JFrame {
-    JLabel leftMancala;
-    JLabel rightMancala;
+    JPanel player2Mancala;
+    JPanel player1Mancala;
 
     private JButton[] player1PitButtons;
     private JButton[] player2PitButtons;
@@ -16,15 +17,18 @@ public class MancalaView extends JFrame {
 
         setLayout(new BorderLayout());
 
-        add(createStorePanel("Mancala A",0), BorderLayout.WEST);
-        add(createStorePanel("Mancala B",0), BorderLayout.EAST);
+        player1Mancala = createStorePanel("Mancala A", 0);
+        player2Mancala = createStorePanel("Mancala B", 0);
+
+        add(player1Mancala, BorderLayout.EAST);
+        add(player2Mancala, BorderLayout.WEST);
 
         JPanel topRowPanel = new JPanel(new GridLayout(1,6));
         JPanel bottomRowPanel = new JPanel(new GridLayout(1,6));
 
         //Add list of JButtons to top / bottom panels
-        player1PitButtons = createPitRow(topRowPanel);
-        player2PitButtons = createPitRow(bottomRowPanel);
+        player2PitButtons = createPitRow(topRowPanel);
+        player1PitButtons = createPitRow(bottomRowPanel);
 
         //Add top/bottom panels to center panel for lay
         JPanel centerPanel = new JPanel(new GridLayout(2, 1));
@@ -61,7 +65,7 @@ public class MancalaView extends JFrame {
         JButton[] buttons = new JButton[6];
 
         for (int i = 0; i < 6; i++) {
-            buttons[i] = createPit(5);
+            buttons[i] = createPit(4);
             panel.add(buttons[i]);
         }
         return buttons;
@@ -99,9 +103,23 @@ public class MancalaView extends JFrame {
                 }
             }
         };
-
-
-
         return pit;
     }
+
+    /**
+     * Loop through player1 and player2 Pit buttons to add ActionListeners.
+     * Sets the action command to "P1_" + index 0-5 representing the pit
+     * @param listener - ActionListener to add
+     */
+    public void addPitListeners(ActionListener listener) {
+        for(int i =0; i < 6; i++) {
+            player1PitButtons[i].setActionCommand("P1_" + i);
+            player1PitButtons[i].addActionListener(listener);
+
+            player2PitButtons[i].setActionCommand("P2_" + i);
+            player2PitButtons[i].addActionListener(listener);
+        }
+    }
+
+    //public void updatePitCounts();
 }
