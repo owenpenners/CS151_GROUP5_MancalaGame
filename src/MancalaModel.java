@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MancalaModel {
@@ -107,7 +108,11 @@ public class MancalaModel {
      *
      * @throws IllegalArgumentException if pit selected has no stones in it
      */
-    public void moveStones(int pitNumber) throws IllegalArgumentException {
+    public void moveStones(Player player, int pitNumber) throws IllegalArgumentException {
+        //Check whether current player is making move
+        if(player != this.currentPlayer) throw new IllegalArgumentException("Wrong player");
+        if(this.board.get(player).get(pitNumber).getStones() == 0) throw new IllegalArgumentException("Hole is empty");
+
         int end = PITS_PER_SIDE;
         int grabbedStones = this.board.get(this.currentPlayer).get(pitNumber).grabStones();
         Player currentSide = this.currentPlayer;
@@ -119,11 +124,10 @@ public class MancalaModel {
         while (grabbedStones > 0) {
             ++pitNumber;
             grabbedStones -= 1;
-            this.board.get(currentSide).get(end).addStone();
-
+            this.board.get(currentSide).get(pitNumber).addStone();
             if (pitNumber == end && grabbedStones != 0) {
                 currentSide = swapPlayer(currentSide);
-                pitNumber %= PITS_PER_SIDE;
+                pitNumber = -1;
             }
         }
 
@@ -149,5 +153,29 @@ public class MancalaModel {
         MancalaPit endPit = this.board.get(this.currentPlayer).get(end);
         endPit.addStones(currentPit.grabStones());
         endPit.addStones(opponentPit.grabStones());
+    }
+
+    /**
+     * Returns an integer array representing a players pit counts as seen on a mancala board
+     * @param player
+     * @return pit count of player
+     */
+    public int[] getPitCountsByPlayer(Player player) {
+        System.out.println(player);
+        int[] pitCount = new int[6];
+        for(int i = 0; i < 6; i++) {
+            pitCount[i] = this.getStonesFromPit(player, i);
+        }
+        if(player == Player.PLAYER_1) {
+            System.out.println(Arrays.toString(pitCount));
+        } else if(player == Player.PLAYER_2) {
+            int[] reversePitCount = new int[6];
+            for(int i = 0; i < 6; i++) {
+                reversePitCount[i] = pitCount[5-i];
+            }
+            System.out.println(Arrays.toString(reversePitCount));
+            return reversePitCount;
+        }
+        return pitCount;
     }
 }
