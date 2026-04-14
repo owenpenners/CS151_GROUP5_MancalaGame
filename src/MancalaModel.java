@@ -8,7 +8,7 @@ public class MancalaModel {
 
     // state of the board
     private Player currentPlayer;
-    final private HashMap<Player, ArrayList<MancalaPit>> sides = new HashMap<>();
+    final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
 
     /**
      * Construct the Mancala backend.
@@ -17,10 +17,10 @@ public class MancalaModel {
     public MancalaModel() {
         currentPlayer = Player.PLAYER_1;
         for (Player player : Player.values()) {
-            sides.put(player, new ArrayList<>());
+            board.put(player, new ArrayList<>());
             for (int i = 0; i < PITS_PER_SIDE; i++)
-                sides.get(player).add(new MancalaPit());
-            sides.get(player).add(new MancalaEnd());
+                board.get(player).add(new MancalaPit());
+            board.get(player).add(new MancalaEnd());
         }
     }
 
@@ -29,8 +29,8 @@ public class MancalaModel {
      */
     public void clearBoard() {
         currentPlayer = Player.PLAYER_1;
-        for (Player player: sides.keySet())
-            for (MancalaPit pit : sides.get(player))
+        for (Player player: board.keySet())
+            for (MancalaPit pit : board.get(player))
                 pit.reset();
     }
 
@@ -42,9 +42,9 @@ public class MancalaModel {
      */
     public void fillPits(int startingStones) {
         currentPlayer = Player.PLAYER_1;
-        for (Player player: sides.keySet())
+        for (Player player: board.keySet())
             for (int i = 0; i < PITS_PER_SIDE; i++) { //ignore ends
-                MancalaPit pit = sides.get(player).get(i);
+                MancalaPit pit = board.get(player).get(i);
                 pit.addStones(startingStones);
             }
     }
@@ -63,8 +63,8 @@ public class MancalaModel {
         }
 
         return switch (player) {
-            case Player.PLAYER_1 -> this.sides.get(Player.PLAYER_1).get(pitNumber).getStones();
-            case Player.PLAYER_2 -> this.sides.get(Player.PLAYER_2).get(pitNumber).getStones();
+            case Player.PLAYER_1 -> this.board.get(Player.PLAYER_1).get(pitNumber).getStones();
+            case Player.PLAYER_2 -> this.board.get(Player.PLAYER_2).get(pitNumber).getStones();
         };
     }
 
@@ -76,8 +76,8 @@ public class MancalaModel {
     public int getStonesFromMancala(Player player) {
         int end = PITS_PER_SIDE;
         return switch (player) {
-            case Player.PLAYER_1 -> this.sides.get(Player.PLAYER_1).get(end).getStones();
-            case Player.PLAYER_2 -> this.sides.get(Player.PLAYER_2).get(end).getStones();
+            case Player.PLAYER_1 -> this.board.get(Player.PLAYER_1).get(end).getStones();
+            case Player.PLAYER_2 -> this.board.get(Player.PLAYER_2).get(end).getStones();
         };
     }
 
@@ -109,7 +109,7 @@ public class MancalaModel {
      */
     public void moveStones(int pitNumber) throws IllegalArgumentException {
         int end = PITS_PER_SIDE;
-        int grabbedStones = this.sides.get(this.currentPlayer).get(pitNumber).grabStones();
+        int grabbedStones = this.board.get(this.currentPlayer).get(pitNumber).grabStones();
         Player currentSide = this.currentPlayer;
         /*
          * Advance to next pit, then deposit stone if it is a valid pit.
@@ -119,7 +119,7 @@ public class MancalaModel {
         while (grabbedStones > 0) {
             ++pitNumber;
             grabbedStones -= 1;
-            this.sides.get(currentSide).get(end).addStone();
+            this.board.get(currentSide).get(end).addStone();
 
             if (pitNumber == end && grabbedStones != 0) {
                 currentSide = swapPlayer(currentSide);
@@ -138,15 +138,15 @@ public class MancalaModel {
 
         // from here on out, currentPlayer is the opponent, currentSide is the current player
         // pass turn if it lands on your side but not an empty pit or opponent pit is empty
-        MancalaPit currentPit = this.sides.get(currentSide).get(pitNumber);
+        MancalaPit currentPit = this.board.get(currentSide).get(pitNumber);
         int opposite_pitNumber = PITS_PER_SIDE - pitNumber - 1;
-        MancalaPit opponentPit = this.sides.get(this.currentPlayer).get(opposite_pitNumber);
+        MancalaPit opponentPit = this.board.get(this.currentPlayer).get(opposite_pitNumber);
 
         if (currentPit.getStones() > 1 || opponentPit.getStones() == 0)
             return;
 
         // collect stones in both pits
-        MancalaPit endPit = this.sides.get(this.currentPlayer).get(end);
+        MancalaPit endPit = this.board.get(this.currentPlayer).get(end);
         endPit.addStones(currentPit.grabStones());
         endPit.addStones(opponentPit.grabStones());
     }
