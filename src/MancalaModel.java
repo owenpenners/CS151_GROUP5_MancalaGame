@@ -51,8 +51,27 @@ public class MancalaModel {
     }
 
     /**
+     * Return the pit associated with the player and the pitNumber (0-indexed).
+     * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
+     * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
+     * @return {@code int} stones in that pit.
+     * @throws IllegalArgumentException if pitNumber argument is invalid.
+     */
+    public MancalaPit getPit(Player player, int pitNumber) {
+        if (pitNumber < 0 || pitNumber >= PITS_PER_SIDE) {
+            throw new IllegalArgumentException("Invalid pit number #" + pitNumber +
+                    "; must be between 0 and " + (PITS_PER_SIDE-1) + " inclusive.");
+        }
+
+        return switch (player) {
+            case Player.PLAYER_1 -> this.board.get(Player.PLAYER_1).get(pitNumber);
+            case Player.PLAYER_2 -> this.board.get(Player.PLAYER_2).get(pitNumber);
+        };
+    }
+
+    /**
      * Returns the stones that are in a pit from a player's side. pitNumber is 0-indexed.
-     * @param player {@code int} either 1 or 2 representing Player 1 or Player 2.
+     * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
      * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
      * @return {@code int} stones in that pit.
      * @throws IllegalArgumentException if pitNumber argument is invalid.
@@ -103,15 +122,28 @@ public class MancalaModel {
     }
 
     /**
+     * Overloaded method of {@link MancalaModel#moveStones(int pitNumber)}.
+     * @param player {@link Player} checks if player is valid.
+     * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed).
+     * @throws IllegalArgumentException if not the right player's turn.
+     * @throws IllegalArgumentException if the pit selected has no stones in it.
+     */
+    public void moveStones(Player player, int pitNumber) {
+        //Check whether current player is making move
+        if (player != this.currentPlayer) throw new IllegalArgumentException("Wrong player");
+        this.moveStones(pitNumber);
+    }
+
+    /**
      * Given a selected pit number of the current player's turn, grab all the stones and distribute it across
-     * the pits. If the last mancala was dropped in the pit
-     *
+     * the pits. If the last mancala was dropped in a pit belonging to the player, take another turn. If it lands
+     * in an empty hole, and the opponent has stones in the opposing pit, collect both stones.
+     * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed)
      * @throws IllegalArgumentException if pit selected has no stones in it
      */
-    public void moveStones(Player player, int pitNumber) throws IllegalArgumentException {
-        //Check whether current player is making move
-        if(player != this.currentPlayer) throw new IllegalArgumentException("Wrong player");
-        if(this.board.get(player).get(pitNumber).getStones() == 0) throw new IllegalArgumentException("Hole is empty");
+    public void moveStones(int pitNumber) throws IllegalArgumentException {
+        if (this.getStonesFromPit(this.currentPlayer, pitNumber) == 0)
+            throw new IllegalArgumentException("Hole is empty");
 
         int end = PITS_PER_SIDE;
         int grabbedStones = this.board.get(this.currentPlayer).get(pitNumber).grabStones();
