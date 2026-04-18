@@ -36,7 +36,7 @@ public class MancalaModel {
     }
 
     /**
-     * Fill the pits in
+     * Fill all pits in with the starting stones.
      * Postcondition: Clears the stones from the end (sets to 0 stones) and fills all the
      * stones to 0.
      * @param startingStones - initial amount of stones
@@ -110,6 +110,14 @@ public class MancalaModel {
     }
 
     /**
+     * Swap players by calling the static swapPlayer function.
+     * Postcondition: players are swapped for the game state.
+     */
+    public void swapPlayer() {
+        this.currentPlayer = swapPlayer(this.currentPlayer);
+    }
+
+    /**
      * Static function that returns the opposite player.
      * @param player {@code Player} initial player.
      * @return {@code Player} opposite player of the passed-in player.
@@ -168,7 +176,7 @@ public class MancalaModel {
             return;
 
         // pass turn to opponent
-        this.currentPlayer = swapPlayer(this.currentPlayer);
+        this.swapPlayer();
         if (this.currentPlayer == currentSide)
             return;
 
