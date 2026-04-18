@@ -159,7 +159,7 @@ public class MancalaModel {
             this.board.get(currentSide).get(pitNumber).addStone();
             if (pitNumber == end && grabbedStones != 0) {
                 currentSide = swapPlayer(currentSide);
-                pitNumber = -1;
+                pitNumber = -1; //set to -1 before beginning next loop, which increments to 0.
             }
         }
 
