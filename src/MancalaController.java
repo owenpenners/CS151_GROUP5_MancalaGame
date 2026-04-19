@@ -72,10 +72,23 @@ refreshBoard();
      * Refresh the mancala board by getting pit counts
      */
     public void refreshBoard() {
+        
+        // Get Player 2 pit counts from the model
         int[] player2PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_2);
+        // Get Player 1 pit counts from the model
         int[] player1PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_1);
-
+        
+        // Get the number of stones in each player's Mancala
+        int player2MancalaCount = model.getStonesFromMancala(MancalaModel.Player.PLAYER_2);
+        int player1MancalaCount = model.getStonesFromMancala(MancalaModel.Player.PLAYER_1);
+        
+        /* can be used for debugging, print to console no longer needed
         System.out.println("Player A Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_1));
         System.out.println("Player B Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_2));
+        */
+        
+        // Tell the view to update what is shown on screen
+        view.updateBoard(player2PitCounts, player1PitCounts,
+            player2MancalaCount, player1MancalaCount);
     }
 }
