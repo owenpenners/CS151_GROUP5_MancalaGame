@@ -3,11 +3,11 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class MancalaView extends JFrame {
-    JPanel player2Mancala;
-    JPanel player1Mancala;
+    private JPanel player2Mancala;
+    private JPanel player1Mancala;
 
-    private JButton[] player1PitButtons;
-    private JButton[] player2PitButtons;
+    private PitButton[] player1PitButtons;
+    private PitButton[] player2PitButtons;
 
     public MancalaView() {
         super("Mancala Game");
@@ -61,17 +61,17 @@ public class MancalaView extends JFrame {
      * @param panel - The panel to attach the buttons to
      * @return a collection of JButtons
      */
-    private JButton[] createPitRow(JPanel panel) {
-        JButton[] buttons = new JButton[6];
+    private PitButton[] createPitRow(JPanel panel) {
+        PitButton[] buttons = new PitButton[6];
 
         for (int i = 0; i < 6; i++) {
-            buttons[i] = createPit(4);
+            buttons[i] = createPitButton(0);
             panel.add(buttons[i]);
         }
         return buttons;
     }
 
-    private JButton createPit(int stones) {
+    private JButton createPitJButton(int stones) {
         JButton pit = new JButton() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -105,6 +105,17 @@ public class MancalaView extends JFrame {
         };
         return pit;
     }
+
+    /**
+     * Create a PitButton with given number of stones
+     * @param stones
+     * @return a PitButton with stones
+     */
+    private PitButton createPitButton(int stones) {
+        return new PitButton(stones);
+    }
+
+
 
     /**
      * Loop through player1 and player2 Pit buttons to add ActionListeners.
