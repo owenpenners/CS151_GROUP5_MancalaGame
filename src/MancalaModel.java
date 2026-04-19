@@ -198,7 +198,7 @@ public class MancalaModel {
     /**
      * Returns an integer array representing a players pit counts as seen on a mancala board
      * @param player
-     * @return pit count of player
+     * @return {@code int[]} integer array of size 6 representing pit counts
      */
     public int[] getPitCountsByPlayer(Player player) {
         System.out.println(player);
