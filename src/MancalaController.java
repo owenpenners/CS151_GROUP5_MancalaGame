@@ -25,6 +25,22 @@ public class MancalaController {
 
     model.fillPits(4); // need to prompt users for number of stones in pit 3 or 4.
 
+/*
+String input = JOptionPane.showInputDialog(view,
+    "Enter number of stones per pit (3 or 4):");
+
+int stones = Integer.parseInt(input);
+
+// simple validation
+if (stones != 3 && stones != 4) {
+    JOptionPane.showMessageDialog(view, "Invalid input. Defaulting to 4.");
+    stones = 4;
+}
+
+model.fillPits(stones);
+refreshBoard();
+*/
+        
     // Future work:
     // - Attach listeners to pit buttons
     // - Handle user clicks
