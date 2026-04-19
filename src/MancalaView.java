@@ -132,5 +132,57 @@ public class MancalaView extends JFrame {
         }
     }
 
-    //public void updatePitCounts();
+    /**
+     * Update PitButtons for both players with given pit counts
+     * @param player1PitCounts
+     * @param player2PitCounts
+     */
+    private void updatePits(int[] player1PitCounts, int[] player2PitCounts) {
+        for(int i = 0; i < 6; i++) {
+            this.player1PitButtons[i].setStones(player1PitCounts[i]);
+            this.player2PitButtons[i].setStones(player2PitCounts[i]);
+        }
+    }
+
+    /**
+     * Update mancala JLabels for both players
+     * @param player1MancalaCount
+     * @param player2MancalaCount
+     */
+    private void updateMancalas(int player1MancalaCount, int player2MancalaCount) {
+        // delete old Mancala JPanels
+//        JLabel player1Mancala = (JLabel) this.player1Mancala.getComponent(0);
+//        foo.setText(Integer.toString(player1MancalaCount));
+        ((JLabel) this.player1Mancala.getComponent(0)).setText(Integer.toString(player1MancalaCount));
+        ((JLabel) this.player2Mancala.getComponent(0)).setText(Integer.toString(player2MancalaCount));
+    }
+
+    /**
+     * Updates board with given pit and store counts for both players
+     * @param player2PitCounts
+     * @param player1PitCounts
+     * @param player2MancalaCount
+     * @param player1MancalaCount
+     */
+    public void updateBoard(int[] player2PitCounts, int []player1PitCounts, int player2MancalaCount, int player1MancalaCount) {
+        updatePits(player1PitCounts,player2PitCounts);
+        updateMancalas(player1MancalaCount, player2MancalaCount);
+    }
+
+    /**
+     * Prompt user for number of starting stones (3 or 4)
+     * @return {@code int} Number of starting stones
+     */
+    public int promptForStartingStones() {
+        String input = JOptionPane.showInputDialog("Enter number of stones per pit (3 or 4):");
+
+        int stones = Integer.parseInt(input);
+        // simple validation
+        if (stones != 3 && stones != 4) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Defaulting to 4.");
+            stones = 4;
+            return stones;
+        }
+        return stones;
+    }
 }
