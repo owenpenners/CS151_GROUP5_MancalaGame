@@ -12,10 +12,12 @@
  */
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MancalaController {
+public class MancalaController implements ChangeListener {
     private MancalaModel model;
     private MancalaView view;
 
@@ -24,7 +26,7 @@ public class MancalaController {
     this.view = view;
 
     model.fillPits(view.promptForStartingStones());
-    refreshBoard();
+    this.stateChanged(new ChangeEvent(this));
 
     // Future work:
     // - Attach listeners to pit buttons
@@ -48,7 +50,7 @@ public class MancalaController {
                 model.moveStones(MancalaModel.Player.PLAYER_1,pit);
                 //model.moveStones(pit);
             }
-            refreshBoard();
+            MancalaController.this.stateChanged(new ChangeEvent(this));
         }
     });
     }
@@ -56,7 +58,7 @@ public class MancalaController {
     /**
      * Refresh the mancala board by getting pit counts
      */
-    public void refreshBoard() {
+    public void stateChanged(ChangeEvent e) {
         
         // Get Player 2 pit counts from the model
         int[] player2PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_2);
