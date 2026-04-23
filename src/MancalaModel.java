@@ -70,6 +70,18 @@ public class MancalaModel {
     }
 
     /**
+     *
+     * @param player
+     * @return
+     */
+    public MancalaEnd getEnd(Player player) {
+        return switch (player) {
+            case Player.PLAYER_1 -> (MancalaEnd) this.board.get(Player.PLAYER_1).getLast();
+            case Player.PLAYER_2 -> (MancalaEnd) this.board.get(Player.PLAYER_2).getLast();
+        };
+    }
+
+    /**
      * Returns the stones that are in a pit from a player's side. pitNumber is 0-indexed.
      * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
      * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
@@ -153,19 +165,19 @@ public class MancalaModel {
         if (this.getStonesFromPit(this.currentPlayer, pitNumber) == 0)
             throw new IllegalArgumentException("Hole is empty");
 
-        int end = PITS_PER_SIDE;
-        int grabbedStones = this.board.get(this.currentPlayer).get(pitNumber).grabStones();
-        Player currentSide = this.currentPlayer;
         /*
          * Advance to next pit, then deposit stone if it is a valid pit.
-         * Upon reaching the end: deposit a stone, then continue depositing stones
+         * Upon reaching the mancala/end: deposit a stone, rotate sides, then repeat depositing stones
          * on opponent's pits.
          */
+        int end = PITS_PER_SIDE;
+        int grabbedStones = this.getPit(currentPlayer, pitNumber).grabStones();
+        Player currentSide = this.currentPlayer;
         while (grabbedStones > 0) {
             ++pitNumber;
             grabbedStones -= 1;
             this.board.get(currentSide).get(pitNumber).addStone();
-            if (pitNumber == end && grabbedStones != 0) {
+            if (pitNumber == end && grabbedStones != 0) { // mancala has been reached
                 currentSide = swapPlayer(currentSide);
                 pitNumber = -1; //set to -1 before beginning next loop, which increments to 0.
             }
@@ -179,20 +191,35 @@ public class MancalaModel {
         this.swapPlayer();
         if (this.currentPlayer == currentSide)
             return;
-
         // from here on out, currentPlayer is the opponent, currentSide is the current player
-        // pass turn if it lands on your side but not an empty pit or opponent pit is empty
-        MancalaPit currentPit = this.board.get(currentSide).get(pitNumber);
-        int opposite_pitNumber = PITS_PER_SIDE - pitNumber - 1;
-        MancalaPit opponentPit = this.board.get(this.currentPlayer).get(opposite_pitNumber);
 
+        // pass turn if it lands on your side but not an empty pit or opponent pit is empty
+        MancalaPit currentPit = this.getPit(currentSide, pitNumber);
+        int opposite_pitNumber = PITS_PER_SIDE - pitNumber - 1; // calculate the reciprocal pit
+        MancalaPit opponentPit = this.getPit(this.currentPlayer, opposite_pitNumber);
         if (currentPit.getStones() > 1 || opponentPit.getStones() == 0)
             return;
 
-        // collect stones in both pits
-        MancalaPit endPit = this.board.get(this.currentPlayer).get(end);
+        // collect stones in both pits and place them in endPit if you did land on your side, and opponent has stones
+        // in reciprocal pit
+        MancalaPit endPit = this.board.get(currentSide).get(end);
         endPit.addStones(currentPit.grabStones());
         endPit.addStones(opponentPit.grabStones());
+
+        // end game if no more stones on the current side, then opponent collects all their stones
+        // and game ends
+        if (this.getTotalStoneCountsInPitsByPlayer(currentSide) == 0) {
+            endPit = this.getEnd(this.currentPlayer);
+            for (int i = 0; i < 6; i++)
+                endPit.addStones(this.getPit(this.currentPlayer, i).grabStones());
+        }
+
+        if (this.getTotalStoneCountsInPitsByPlayer(this.currentPlayer) == 0) {
+            endPit = this.getEnd(currentSide);
+            for (int i = 0; i < 6; i++) {
+                endPit.addStones(this.getPit(currentSide, i).grabStones());
+            }
+        }
     }
 
     /**
@@ -217,5 +244,19 @@ public class MancalaModel {
             return reversePitCount;
         }
         return pitCount;
+    }
+
+    /**
+     *
+     * @param player
+     * @return
+     */
+    private int getTotalStoneCountsInPitsByPlayer(Player player) {
+        int[] pitCount = this.getPitCountsByPlayer(player);
+        int count = 0;
+        for (int i = 0; i < pitCount.length; i++) {
+            count += pitCount[i];
+        }
+        return count;
     }
 }

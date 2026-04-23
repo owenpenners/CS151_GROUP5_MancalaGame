@@ -35,22 +35,34 @@ public class MancalaController implements ChangeListener {
     this.view.addPitListeners(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String cmd = e.getActionCommand();
-
-            if(cmd.startsWith("P2_")) {
-                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
-                System.out.println("Player 2 clicked " + pit);
-                // call moveStones
-                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
-                //model.moveStones(pit);
-            } else if(cmd.startsWith("P1_")) {
-                int pit = Integer.parseInt(cmd.substring(3));
-                System.out.println("Player 1 clicked " + pit);
-                // call moveStones
-                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
-                //model.moveStones(pit);
+            PitButton b = (PitButton) e.getSource();
+            String p = b.getPlayer();
+            int n = b.getPit();
+            System.out.println("Player " + b + " clicked " + n);
+            switch (p) {
+                case "P1" -> model.moveStones(MancalaModel.Player.PLAYER_1, n);
+                case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
             }
             MancalaController.this.stateChanged(new ChangeEvent(this));
+
+
+//            String cmd = e.getActionCommand();
+//
+//
+//            if(cmd.startsWith("P2_")) {
+//                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
+//                System.out.println("Player 2 clicked " + pit);
+//                // call moveStones
+//                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
+//                //model.moveStones(pit);
+//            } else if(cmd.startsWith("P1_")) {
+//                int pit = Integer.parseInt(cmd.substring(3));
+//                System.out.println("Player 1 clicked " + pit);
+//                // call moveStones
+//                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
+//                //model.moveStones(pit);
+//            }
+//            MancalaController.this.stateChanged(new ChangeEvent(this));
         }
     });
     }

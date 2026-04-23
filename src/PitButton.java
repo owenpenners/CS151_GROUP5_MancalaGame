@@ -3,9 +3,21 @@ import java.awt.*;
 
 public class PitButton extends JButton {
     private int stones;
+    private final String player;
+    private final int pitNumber;
 
-    public PitButton(int stones) {
-        this.stones = stones;
+    public PitButton(String player, int pitNumber) {
+        this.player = player;
+        this.pitNumber = pitNumber;
+        this.stones = 0;
+    }
+
+    public String getPlayer() {
+        return this.player;
+    }
+
+    public int getPit() {
+        return this.pitNumber;
     }
 
     public void setStones(int stones) {
