@@ -5,6 +5,6 @@
 public class MancalaEnd extends MancalaPit {
     @Override
     public int grabStones() {
-        throw new IllegalArgumentException("Cannot grab stones from the end.");
+        throw new IllegalArgumentException("Cannot grab stones from the Mancala end.");
     }
 }

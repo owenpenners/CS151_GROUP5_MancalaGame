@@ -29,9 +29,8 @@ public class MancalaView extends JFrame {
         JPanel bottomRowPanel = new JPanel(new GridLayout(1,6));
 
         //Add list of JButtons to top / bottom panels
-        player2PitButtons = createPitRow("P2", topRowPanel);
-        Collections.reverse(Arrays.asList(player2PitButtons));
-        player1PitButtons = createPitRow("P1", bottomRowPanel);
+        player2PitButtons = createPitRow("P2", topRowPanel, true);
+        player1PitButtons = createPitRow("P1", bottomRowPanel, false);
 
         //Add top/bottom panels to center panel for lay
         JPanel centerPanel = new JPanel(new GridLayout(2, 1));
@@ -64,13 +63,23 @@ public class MancalaView extends JFrame {
      * @param panel - The panel to attach the buttons to
      * @return a collection of JButtons
      */
-    private PitButton[] createPitRow(String player, JPanel panel) {
+    private PitButton[] createPitRow(String player, JPanel panel, boolean reverse) {
         PitButton[] buttons = new PitButton[6];
 
         for (int i = 0; i < 6; i++) {
             buttons[i] = createPitButton(player, i);
-            panel.add(buttons[i]);
         }
+
+        if (reverse) {
+            for (int i = 5; i >= 0; i--)
+                panel.add(buttons[i]);
+        }
+        else {
+            for (int i = 0; i < 6; i++) {
+                panel.add(buttons[i]);
+            }
+        }
+
         return buttons;
     }
 
@@ -118,8 +127,6 @@ public class MancalaView extends JFrame {
     private PitButton createPitButton(String player, int pitNumber) {
         return new PitButton(player, pitNumber);
     }
-
-
 
     /**
      * Loop through player1 and player2 Pit buttons to add ActionListeners.

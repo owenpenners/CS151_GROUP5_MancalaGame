@@ -6,9 +6,7 @@ public class MancalaPit {
     public void addStones(int stones) { this.stones += stones; }
     public void reset() { this.stones = 0; }
 
-    public int grabStones() throws IllegalArgumentException{
-        if (this.stones == 0)
-            throw new IllegalArgumentException("Hole is empty; cannot select this hole.");
+    public int grabStones() {
         int grabbedStones = this.stones;
         this.stones = 0;
         return grabbedStones;

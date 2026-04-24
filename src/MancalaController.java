@@ -1,22 +1,21 @@
-/**
- * MancalaController
- *
- * This class connects the Model and View in the MVC pattern.
- * It will handle user interactions (such as button clicks),
- * call the appropriate methods in the model (game logic),
- * and update the view accordingly.
- *
- * Responsibilities:
- * - Listen to user input from the view
- * - Refresh/update the view after changes
- */
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * MancalaController
+ * <p>
+ * This class connects the Model and View in the MVC pattern.
+ * It will handle user interactions (such as button clicks),
+ * call the appropriate methods in the model (game logic),
+ * and update the view accordingly.
+ * <p>
+ * Responsibilities:
+ * <ul>- Listen to user input from the view</ul>
+ * <ul>- Refresh/update the view after changes</ul>
+ */
 public class MancalaController implements ChangeListener {
     private MancalaModel model;
     private MancalaView view;
@@ -38,7 +37,7 @@ public class MancalaController implements ChangeListener {
             PitButton b = (PitButton) e.getSource();
             String p = b.getPlayer();
             int n = b.getPit();
-            System.out.println("Player " + b + " clicked " + n);
+            System.out.println("Player " + p + " clicked " + n);
             switch (p) {
                 case "P1" -> model.moveStones(MancalaModel.Player.PLAYER_1, n);
                 case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
@@ -78,8 +77,8 @@ public class MancalaController implements ChangeListener {
         int[] player1PitCounts = model.getPitCountsByPlayer(MancalaModel.Player.PLAYER_1);
         
         // Get the number of stones in each player's Mancala
-        int player2MancalaCount = model.getStonesFromMancala(MancalaModel.Player.PLAYER_2);
-        int player1MancalaCount = model.getStonesFromMancala(MancalaModel.Player.PLAYER_1);
+        int player2MancalaCount = model.getStonesFromEnd(MancalaModel.Player.PLAYER_2);
+        int player1MancalaCount = model.getStonesFromEnd(MancalaModel.Player.PLAYER_1);
         
         /* can be used for debugging, print to console no longer needed
         System.out.println("Player A Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_1));
