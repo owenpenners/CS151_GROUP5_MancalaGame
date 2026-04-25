@@ -27,11 +27,11 @@ public class MancalaView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 600);
         setLocationRelativeTo(null);
-
         setLayout(new BorderLayout());
 
-        player1Mancala = createStorePanel("Mancala A", 0);
-        player2Mancala = createStorePanel("Mancala B", 0);
+        int DEFAULT_END = 0;
+        player1Mancala = createStorePanel("Mancala A", DEFAULT_END);
+        player2Mancala = createStorePanel("Mancala B", DEFAULT_END);
 
         add(player1Mancala, BorderLayout.EAST);
         add(player2Mancala, BorderLayout.WEST);

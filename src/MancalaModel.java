@@ -14,16 +14,15 @@ public class MancalaModel {
     private final int MAX_NUMBER_OF_UNDOS = 3;
 
     // state of the board
-    private Player currentPlayer;
-    private boolean gameOver;
+    private boolean gameOver = true;
+    private Player currentPlayer = Player.PLAYER_1;;
     private MancalaRecord previousState = null;
     private int undoCount = 0;
     final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
     final private HashMap<Player, Integer> ends = new HashMap<>();
 
-
     // record to save state / return state of board
-    public record MancalaRecord(boolean gameOver, Player currentPlayer,
+    public record MancalaRecord(boolean gameOver, Player currentPlayer, int undoLeft,
                                 List<Integer> p1_side, List<Integer> p2_side,
                                 int p1_end, int p2_end) {}
 
@@ -32,7 +31,6 @@ public class MancalaModel {
      * Postcondition: set the starting player to P1; construct the MancalaBoard with pits and the end mancalas.
      */
     public MancalaModel() {
-        currentPlayer = Player.PLAYER_1;
         for (Player player : Player.values()) {
             board.put(player, new ArrayList<>());
             for (int i = 0; i < PITS_PER_SIDE; i++)
@@ -74,7 +72,9 @@ public class MancalaModel {
         int p1_end = this.getStonesFromEnd(Player.PLAYER_1);
         int p2_end = this.getStonesFromEnd(Player.PLAYER_2);
 
-        return new MancalaRecord(gameOver, currentPlayer, p1_side, p2_side, p1_end, p2_end);
+        int undoLeft = MAX_NUMBER_OF_UNDOS - undoCount;
+
+        return new MancalaRecord(gameOver, currentPlayer, undoLeft, p1_side, p2_side, p1_end, p2_end);
     }
 
     /**
