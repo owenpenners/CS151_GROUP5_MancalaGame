@@ -1,21 +1,36 @@
 public class MancalaPit {
     private int stones = 0;
 
-    public MancalaPit() {}
-
-    public MancalaPit(MancalaPit pit) {
-        this.stones = pit.stones;
-    }
-
+    /**
+     *
+     * @return
+     */
     public int getStones() { return this.stones; }
-    public void addStone() { this.stones++; }
-    public void addStones(int stones) { this.stones += stones; }
-    public void reset() { this.stones = 0; }
 
+    /**
+     *
+     * @param stones
+     */
+    public void setStones(int stones) { this.stones = stones; }
+
+    /**
+     *
+     */
+    public void addStone() { this.stones++; }
+
+    /**
+     *
+     * @param stones
+     */
+    public void addStones(int stones) { this.stones += stones; }
+
+    /**
+     *
+     * @return
+     */
     public int grabStones() {
-        int grabbedStones = this.stones;
-        this.stones = 0;
+        int grabbedStones = this.getStones();
+        this.setStones(0);
         return grabbedStones;
     }
-
 }

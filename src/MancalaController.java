@@ -44,27 +44,17 @@ public class MancalaController implements ChangeListener {
             String p = b.getPlayer();
             int n = b.getPit();
             System.out.println("Player " + p + " clicked " + n);
-            switch (p) {
-                case "P1" -> model.moveStones(MancalaModel.Player.PLAYER_1, n);
-                case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
+            try {
+                switch (p) {
+                    case "P1" -> model.moveStones(MancalaModel.Player.PLAYER_1, n);
+                    case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
+                }
             }
-            //            String cmd = e.getActionCommand();
-            //
-            //
-            //            if(cmd.startsWith("P2_")) {
-            //                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
-            //                System.out.println("Player 2 clicked " + pit);
-            //                // call moveStones
-            //                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
-            //                //model.moveStones(pit);
-            //            } else if(cmd.startsWith("P1_")) {
-            //                int pit = Integer.parseInt(cmd.substring(3));
-            //                System.out.println("Player 1 clicked " + pit);
-            //                // call moveStones
-            //                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
-            //                //model.moveStones(pit);
-            //            }
-            //            MancalaController.this.stateChanged(new ChangeEvent(this));
+            catch (IllegalArgumentException err) {
+                System.err.println(err.getMessage());
+                view.toastError(err.getMessage());
+            }
+
         });
     }
 
@@ -77,6 +67,7 @@ public class MancalaController implements ChangeListener {
                 MancalaController.this.model.undo();
             }
             catch (IllegalStateException err) {
+                System.err.println(err.getMessage());
                 view.toastError(err.getMessage());
             }
         });

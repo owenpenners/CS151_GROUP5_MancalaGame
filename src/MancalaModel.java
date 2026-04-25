@@ -11,13 +11,17 @@ public class MancalaModel {
     // constants
     public enum Player {PLAYER_1, PLAYER_2}
     private final static int PITS_PER_SIDE = 6;
+    private int MAX_NUMBER_OF_UNDOS = 3;
 
     // state of the board
     private Player currentPlayer;
     private MancalaRecord previousState = null;
+    private int countUndos = 0;
     final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
     final private HashMap<Player, Integer> ends = new HashMap<>();
 
+
+    // record to save state / return state of board
     public record MancalaRecord(Player currentPlayer, List<Integer> p1_side, List<Integer> p2_side,
                                 int p1_end, int p2_end) {}
 
@@ -52,6 +56,10 @@ public class MancalaModel {
             listener.stateChanged(event);
     }
 
+    /**
+     *
+     * @return
+     */
     public MancalaRecord getRecord() {
         List<Integer> p1_side = new ArrayList<>();
         for (MancalaPit pit : this.getPits(Player.PLAYER_1))
@@ -62,7 +70,6 @@ public class MancalaModel {
             p2_side.add(pit.getStones());
 
         int p1_end = this.getStonesFromEnd(Player.PLAYER_1);
-
         int p2_end = this.getStonesFromEnd(Player.PLAYER_2);
 
         return new MancalaRecord(currentPlayer, p1_side, p2_side, p1_end, p2_end);
@@ -72,7 +79,7 @@ public class MancalaModel {
      *
      * @param record
      */
-    private void copyState(MancalaRecord record) {
+    private void pasteState(MancalaRecord record) {
         // clear board, then copy player pits
         this.clearBoard();
         for (Player player : Player.values()) {
@@ -104,7 +111,7 @@ public class MancalaModel {
         currentPlayer = Player.PLAYER_1;
         for (Player player : board.keySet()) {
             for (MancalaPit pit : board.get(player))
-                pit.reset();
+                pit.setStones(0);
             ends.put(player, 0);
         }
         updateChangeListeners();
@@ -208,11 +215,12 @@ public class MancalaModel {
     }
 
     /**
-     * Swap players by calling the static getOtherPlayer function.
+     * Swap players by calling the static getOtherPlayer function. Refreshes Undo Limit.
      * Postcondition: players are swapped for the game state.
      */
     private void swapPlayer() {
         this.currentPlayer = getOtherPlayer(this.currentPlayer);
+        this.countUndos = 0;
     }
 
     /**
@@ -239,70 +247,70 @@ public class MancalaModel {
      */
     private void moveStones(int pitNumber) throws IllegalArgumentException {
         if (this.getStonesFromPit(this.currentPlayer, pitNumber) == 0)
-            throw new IllegalArgumentException("Hole is empty");
-
+            throw new IllegalArgumentException("Invalid hole; hole contains no stones.");
         if (pitNumber < 0 || pitNumber >= PITS_PER_SIDE)
             throw new IllegalArgumentException("Out of bounds pit number.");
 
-        /*
-         * save state of board
-         */
-        MancalaRecord tempSave = this.getRecord();
+        // save state of board
+        this.previousState = this.getRecord();
 
         /*
          * Advance to next pit, then deposit stone if it is a valid pit.
          * Upon reaching the mancala/end: deposit a stone, rotate sides, then repeat depositing stones
          * on opponent's pits.
          */
-
         int grabbedStones = this.getPit(currentPlayer, pitNumber).grabStones();
-        Player pitSideIter = this.currentPlayer;
+        Player pitSide = this.currentPlayer;
         while (grabbedStones > 0) {
             pitNumber++;
 
             // place stone in pit
             if (pitNumber < PITS_PER_SIDE) {
                 grabbedStones--;
-                this.addStoneToPit(pitSideIter, pitNumber);
+                this.addStoneToPit(pitSide, pitNumber);
                 continue;
             }
 
             // mancala end has been reached
             pitNumber = -1; //let -1 mean the end of the board
             // if it is the current player's side / mancala, put stone in
-            if (pitSideIter == this.currentPlayer) {
+            if (pitSide == this.currentPlayer) {
                 grabbedStones--;
                 this.addStonesToEnd(this.currentPlayer, 1);
             }
             // rotate to other side and position pitNumber at the first
-            pitSideIter = getOtherPlayer(pitSideIter);
+            pitSide = getOtherPlayer(pitSide);
         }
 
-        // end game if no more stones on side
-        this.endGameIfEmptySide();
+        this.endTurn(pitSide, pitNumber);
+    }
 
-        // free turn if turn ends in the Mancala end
-        if (pitNumber == -1) {
-            this.previousState = tempSave;
-            return;
-        }
+    /**
+     *
+     * @param pitSide
+     * @param currentPitNum
+     */
+    private void endTurn(Player pitSide, int currentPitNum) {
+        // check if game has reached an end game state
+        if (this.endGame()) return;
 
+        // take another turn if turn ends in the Mancala end;
         // pass turn to opponent if last stone placed was on opponent side
-        if (this.currentPlayer != pitSideIter) {
+        if (currentPitNum == -1)
+            return;
+        if (this.currentPlayer != pitSide) {
             this.swapPlayer();
-            this.previousState = tempSave;
             return;
         }
 
-        // currently, last stone placed was on your side, so pitSideIter == currentPlayer
-        int opposite_pitNumber = PITS_PER_SIDE - pitNumber - 1; // calculate the reciprocal pit
-        MancalaPit currentPit = this.getPit(this.currentPlayer, pitNumber);
+        // currently, last stone placed was on your side. locate pit opposite to where the last stone was placed
+        int opposite_pitNumber = PITS_PER_SIDE - currentPitNum - 1; // calculate the reciprocal pit
+        MancalaPit currentPit = this.getPit(this.currentPlayer, currentPitNum);
         MancalaPit opponentPit = this.getPit(getOtherPlayer(this.currentPlayer), opposite_pitNumber);
 
         // pass turn if it lands on your side but not an empty pit or opponent pit is empty
         if (currentPit.getStones() > 1 || opponentPit.getStones() == 0) {
             this.swapPlayer();
-            this.previousState = tempSave;
             return;
         }
 
@@ -311,42 +319,30 @@ public class MancalaModel {
         this.addStonesToEnd(this.currentPlayer, currentPit.grabStones());
         this.addStonesToEnd(this.currentPlayer, opponentPit.grabStones());
 
-        // resolve empty side, then pass turn.
-        this.endGameIfEmptySide();
+        // check if game has ended
+        if (this.endGame()) return;
+
+        // otherwise swap players
         this.swapPlayer();
-        this.previousState = tempSave;
     }
 
     /**
      *
      */
-    private void endGameIfEmptySide() {
-        // end game if no more stones on the current side, then opponent collects all their stones
-        // and game ends
-        Player currPlayer = this.currentPlayer;
-        Player oppPlayer = getOtherPlayer(this.currentPlayer);
-
-        if (this.sumPits(currPlayer) == 0) {
-            for (int i = 0; i < 6; i++) {
-                try {
-                    int stones = this.getPit(oppPlayer, i).grabStones();
-                    this.ends.put(oppPlayer, this.ends.get(oppPlayer) + stones);
-                } catch (IllegalArgumentException _) {
-                }
-                ;
-            }
+    private boolean endGame() {
+        for (Player player : Player.values()) {
+            if (this.sumPits(player) != 0)
+                continue;
+            // this code executes if there is a side with no stones on it.
+            // for the opposing player with stones
+            // collect all the stones on their side, and add it to their mancala.
+            Player oppPlayer = getOtherPlayer(player);
+            for (MancalaPit pit : this.getPits(oppPlayer))
+                this.addStonesToEnd(oppPlayer, pit.grabStones());
+            this.previousState = null; //wipe save
+            return true;
         }
-
-        if (this.sumPits(oppPlayer) == 0) {
-            for (int i = 0; i < 6; i++) {
-                try {
-                    int stones = this.getPit(currPlayer, i).grabStones();
-                    this.ends.put(currPlayer, this.ends.get(currPlayer) + stones);
-                } catch (IllegalArgumentException _) {
-                }
-                ;
-            }
-        }
+        return false;
     }
 
     // VIEW METHODS
@@ -361,8 +357,7 @@ public class MancalaModel {
     public void setPits(int startingStones) {
         for (Player player : board.keySet())
             for (MancalaPit pit : this.getPits(player)) {
-                pit.reset();
-                pit.addStones(startingStones);
+                pit.setStones(startingStones);
             }
         this.updateChangeListeners();
     }
@@ -378,7 +373,7 @@ public class MancalaModel {
     public void moveStones(Player player, int pitNumber) {
         //Check whether current player is making move
         if (player != this.currentPlayer)
-            throw new IllegalArgumentException("Wrong player");
+            throw new IllegalArgumentException("Wrong player's turn.");
         this.moveStones(pitNumber);
         this.updateChangeListeners();
     }
@@ -396,11 +391,12 @@ public class MancalaModel {
      */
     public void undo() {
         if (this.previousState == null)
+            throw new IllegalStateException("Cannot undo.");
+        if (this.countUndos >= this.MAX_NUMBER_OF_UNDOS)
             throw new IllegalStateException("No undo's left.");
-        this.copyState(this.previousState);
+        this.pasteState(this.previousState);
+        this.countUndos += 1;
         this.previousState = null;
         this.updateChangeListeners();
     }
-
-
 }
