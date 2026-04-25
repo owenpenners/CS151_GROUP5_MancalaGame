@@ -1,10 +1,18 @@
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class MancalaModel {
+    // mvc connections
+    private ArrayList<ChangeListener> listeners = new ArrayList<>();
+
     // constants
-    public enum Player {PLAYER_1, PLAYER_2};
+    public enum Player {PLAYER_1, PLAYER_2}
+
+    ;
     private final static int PITS_PER_SIDE = 6;
 
     // state of the board
@@ -27,32 +35,35 @@ public class MancalaModel {
     }
 
     /**
-     * Clear out the stones from the pits.
+     *
+     * @param list
      */
-    public void clearBoard() {
-        currentPlayer = Player.PLAYER_1;
-        for (Player player: board.keySet()) {
-            for (MancalaPit pit : board.get(player))
-                pit.reset();
-            ends.put(player, 0);
-        }
+    public void addChangeListener(ChangeListener list) {
+        this.listeners.add(list);
     }
 
     /**
-     * Fill all pits in with the starting stones.
-     * Postcondition: Clears the stones from the end (sets to 0 stones) and fills all the
-     * stones to 0.
-     * @param startingStones - initial amount of stones
+     *
      */
-    public void fillPits(int startingStones) {
-        for (Player player: board.keySet())
-            for (int i = 0; i < PITS_PER_SIDE; i++) //ignore ends
-                this.setStonesOfPit(player, i, startingStones);
+    private void updateChangeListeners() {
+        ChangeEvent event = new ChangeEvent(this);
+        for (ChangeListener listener : listeners)
+            listener.stateChanged(event);
+    }
+
+    /**
+     *
+     * @param player
+     * @return
+     */
+    private List<MancalaPit> getPits(Player player) {
+        return this.board.get(player);
     }
 
     /**
      * Return the pit associated with the player and the pitNumber (0-indexed).
-     * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
+     *
+     * @param player    {@link Player} either 1 or 2 representing Player 1 or Player 2.
      * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
      * @return {@code int} stones in that pit.
      * @throws IllegalArgumentException if pitNumber argument is invalid.
@@ -60,13 +71,10 @@ public class MancalaModel {
     private MancalaPit getPit(Player player, int pitNumber) {
         if (pitNumber < 0 || pitNumber >= PITS_PER_SIDE) {
             throw new IllegalArgumentException("Invalid pit number #" + pitNumber +
-                    "; must be between 0 and " + (PITS_PER_SIDE-1) + " inclusive.");
+                    "; must be between 0 and " + (PITS_PER_SIDE - 1) + " inclusive.");
         }
 
-        return switch (player) {
-            case Player.PLAYER_1 -> this.board.get(Player.PLAYER_1).get(pitNumber);
-            case Player.PLAYER_2 -> this.board.get(Player.PLAYER_2).get(pitNumber);
-        };
+        return this.getPits(player).get(pitNumber);
     }
 
     /**
@@ -83,18 +91,31 @@ public class MancalaModel {
     /**
      *
      * @param player
-     * @param pitNumber
-     * @param stones
+     * @return
      */
-    private void setStonesOfPit(Player player, int pitNumber, int stones) {
-        MancalaPit pit = this.getPit(player, pitNumber);
-        pit.reset();
-        pit.addStones(stones);
+    private int sumPits(Player player) {
+        int sum = 0;
+        for (MancalaPit pit : this.getPits(player))
+            sum += pit.getStones();
+        return sum;
+    }
+
+    /**
+     *
+     * @param player
+     * @return
+     */
+    public List<Integer> getStonesOfPits(Player player) {
+        List<Integer> copy = new ArrayList<>();
+        for (MancalaPit pit : board.get(player))
+            copy.add(pit.getStones());
+        return copy;
     }
 
     /**
      * Returns the stones that are in a pit from a player's side. pitNumber is 0-indexed.
-     * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
+     *
+     * @param player    {@link Player} either 1 or 2 representing Player 1 or Player 2.
      * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
      * @return {@code int} stones in that pit.
      * @throws IllegalArgumentException if pitNumber argument is invalid.
@@ -102,7 +123,7 @@ public class MancalaModel {
     public int getStonesFromPit(Player player, int pitNumber) {
         if (pitNumber < 0 || pitNumber >= PITS_PER_SIDE) {
             throw new IllegalArgumentException("Invalid pit number #" + pitNumber +
-                    "; must be between 0 and " + (PITS_PER_SIDE-1) + " inclusive.");
+                    "; must be between 0 and " + (PITS_PER_SIDE - 1) + " inclusive.");
         }
 
         return switch (player) {
@@ -123,6 +144,7 @@ public class MancalaModel {
 
     /**
      * Returns the stones in a player's end.
+     *
      * @param player {@code int} either 1 or 2 representing Player 1 or Player 2.
      * @return {@code int} stones from that player's end
      */
@@ -132,6 +154,7 @@ public class MancalaModel {
 
     /**
      * Returns the current player.
+     *
      * @return {@code Player} whose turn it is.
      */
     public Player getCurrentPlayer() {
@@ -148,6 +171,7 @@ public class MancalaModel {
 
     /**
      * Static function that returns the opposite player.
+     *
      * @param player {@code Player} initial player.
      * @return {@code Player} opposite player of the passed-in player.
      */
@@ -158,9 +182,12 @@ public class MancalaModel {
         };
     }
 
+    // GAME LOGIC
+
     /**
      * Overloaded method of {@link MancalaModel#moveStones(int pitNumber)}.
-     * @param player {@link Player} checks if player is valid.
+     *
+     * @param player    {@link Player} checks if player is valid.
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed).
      * @throws IllegalArgumentException if not the right player's turn.
      * @throws IllegalArgumentException if the pit selected has no stones in it.
@@ -169,16 +196,18 @@ public class MancalaModel {
         //Check whether current player is making move
         if (player != this.currentPlayer) throw new IllegalArgumentException("Wrong player");
         this.moveStones(pitNumber);
+        this.updateChangeListeners();
     }
 
     /**
      * Given a selected pit number of the current player's turn, grab all the stones and distribute it across
      * the pits. If the last mancala was dropped in a pit belonging to the player, take another turn. If it lands
      * in an empty hole, and the opponent has stones in the opposing pit, collect both stones.
+     *
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed)
      * @throws IllegalArgumentException if pit selected has no stones in it
      */
-    public void moveStones(int pitNumber) throws IllegalArgumentException {
+    private void moveStones(int pitNumber) throws IllegalArgumentException {
         if (this.getStonesFromPit(this.currentPlayer, pitNumber) == 0)
             throw new IllegalArgumentException("Hole is empty");
 
@@ -190,14 +219,14 @@ public class MancalaModel {
          * Upon reaching the mancala/end: deposit a stone, rotate sides, then repeat depositing stones
          * on opponent's pits.
          */
-        int end = PITS_PER_SIDE;
+
         int grabbedStones = this.getPit(currentPlayer, pitNumber).grabStones();
         Player pitSideIter = this.currentPlayer;
         while (grabbedStones > 0) {
             pitNumber++;
 
             // place stone in pit
-            if (pitNumber != end) {
+            if (pitNumber < PITS_PER_SIDE) {
                 grabbedStones--;
                 this.addStonesToPit(pitSideIter, pitNumber, 1);
                 continue;
@@ -218,8 +247,9 @@ public class MancalaModel {
         this.endGameIfEmptySide();
 
         // free turn if turn ends in the Mancala end
-        if (pitNumber == -1)
+        if (pitNumber == -1) {
             return;
+        }
 
         // pass turn to opponent if last stone placed was on opponent side
         if (this.currentPlayer != pitSideIter) {
@@ -257,63 +287,56 @@ public class MancalaModel {
         Player currPlayer = this.currentPlayer;
         Player oppPlayer = getOtherPlayer(this.currentPlayer);
 
-        if (this.getTotalStoneCountsInPitsByPlayer(currPlayer) == 0)  {
+        if (this.sumPits(currPlayer) == 0) {
             for (int i = 0; i < 6; i++) {
                 try {
                     int stones = this.getPit(oppPlayer, i).grabStones();
                     this.ends.put(oppPlayer, this.ends.get(oppPlayer) + stones);
+                } catch (IllegalArgumentException _) {
                 }
-                catch (IllegalArgumentException _) { };
+                ;
             }
         }
 
-        if (this.getTotalStoneCountsInPitsByPlayer(oppPlayer) == 0) {
+        if (this.sumPits(oppPlayer) == 0) {
             for (int i = 0; i < 6; i++) {
                 try {
                     int stones = this.getPit(currPlayer, i).grabStones();
                     this.ends.put(currPlayer, this.ends.get(currPlayer) + stones);
+                } catch (IllegalArgumentException _) {
                 }
-                catch (IllegalArgumentException _) { };
+                ;
             }
         }
     }
 
     /**
-     * Returns an integer array representing a players pit counts as seen on a mancala board
-     * @param player
-     * @return {@code int[]} integer array of size 6 representing pit counts
+     * Fill all pits in with the starting stones.
+     * Postcondition: Clears the stones from the end (sets to 0 stones) and fills all the
+     * stones to 0.
+     *
+     * @param startingStones - initial amount of stones
      */
-    public int[] getPitCountsByPlayer(Player player) {
-        System.out.println(player);
-        int[] pitCount = new int[6];
-        for(int i = 0; i < 6; i++) {
-            pitCount[i] = this.getStonesFromPit(player, i);
-        }
-        System.out.println(Arrays.toString(pitCount));
-//        if(player == Player.PLAYER_1) {
-//            System.out.println(Arrays.toString(pitCount));
-//        } else if(player == Player.PLAYER_2) {
-//            int[] reversePitCount = new int[6];
-//            for(int i = 0; i < 6; i++) {
-//                reversePitCount[i] = pitCount[5-i];
-//            }
-//            System.out.println(Arrays.toString(reversePitCount));
-//            return reversePitCount;
-//        }
-        return pitCount;
+    public void fillPits(int startingStones) {
+        for (Player player : board.keySet())
+            for (MancalaPit pit : this.getPits(player)) {
+                pit.reset();
+                pit.addStones(startingStones);
+            }
+
+        updateChangeListeners();
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Clear out the stones from the pits.
      */
-    private int getTotalStoneCountsInPitsByPlayer(Player player) {
-        int[] pitCount = this.getPitCountsByPlayer(player);
-        int count = 0;
-        for (int i = 0; i < pitCount.length; i++) {
-            count += pitCount[i];
+    public void clearBoard() {
+        currentPlayer = Player.PLAYER_1;
+        for (Player player : board.keySet()) {
+            for (MancalaPit pit : board.get(player))
+                pit.reset();
+            ends.put(player, 0);
         }
-        return count;
+        updateChangeListeners();
     }
 }
