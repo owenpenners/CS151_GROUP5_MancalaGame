@@ -83,8 +83,7 @@ public class MancalaController implements ChangeListener {
      */
     public void attachNewGameListener() {
         this.view.addNewGameListener(e -> {
-            MancalaController.this.model.resetBoard();
-            model.setPits(view.promptForStartingStones());
+            model.newGame(view.promptForStartingStones());
         });
     }
 

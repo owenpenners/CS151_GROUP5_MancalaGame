@@ -19,7 +19,7 @@ public class MancalaView extends JFrame {
     private final JButton newGameButton;
 
     /**
-     * 
+     *
      */
     public MancalaView() {
         super("Mancala Game");
@@ -137,9 +137,10 @@ public class MancalaView extends JFrame {
 //    }
 
     /**
-     * Create a PitButton with given number of stones
-     * @param stones
-     * @return a PitButton with stones
+     *
+     * @param player
+     * @param pitNumber
+     * @return
      */
     private PitButton createPitButton(String player, int pitNumber) {
         return new PitButton(player, pitNumber);
