@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class MancalaView extends JFrame {
     private JPanel player2Mancala;
@@ -10,6 +11,11 @@ public class MancalaView extends JFrame {
 
     private PitButton[] player1PitButtons;
     private PitButton[] player2PitButtons;
+
+    private JButton undoButton;
+    private JButton newGameButton;
+
+    public record MancalaRecord(List<Integer> p1_side, List<Integer> p2_side, int p1_end, int p2_end) {}
 
     public MancalaView() {
         super("Mancala Game");
@@ -24,7 +30,6 @@ public class MancalaView extends JFrame {
 
         add(player1Mancala, BorderLayout.EAST);
         add(player2Mancala, BorderLayout.WEST);
-
         JPanel topRowPanel = new JPanel(new GridLayout(1,6));
         JPanel bottomRowPanel = new JPanel(new GridLayout(1,6));
 
@@ -37,7 +42,15 @@ public class MancalaView extends JFrame {
         centerPanel.add(topRowPanel, BorderLayout.NORTH);
         centerPanel.add(bottomRowPanel, BorderLayout.SOUTH);
 
+        //Add bottom panel
+        JPanel bottomPanel = new JPanel();
+        this.undoButton = new JButton("Undo");
+        this.newGameButton = new JButton("New Game");
+        bottomPanel.add(undoButton);
+        bottomPanel.add(newGameButton);
+
         add(centerPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
         setVisible(true);
     }
 
@@ -141,14 +154,31 @@ public class MancalaView extends JFrame {
     }
 
     /**
+     *
+     * @param listener
+     */
+    public void addUndoListener(ActionListener listener) {
+        this.undoButton.addActionListener(listener);
+    }
+
+    /**
+     *
+     * @param listener
+     */
+    public void addNewGameListener(ActionListener listener) {
+        this.newGameButton.addActionListener(listener);
+    }
+
+    /**
      * Update PitButtons for both players with given pit counts
      * @param player1PitCounts
      * @param player2PitCounts
      */
-    private void updatePits(int[] player1PitCounts, int[] player2PitCounts) {
+    private void updatePits(List<Integer> player1PitCounts, List<Integer> player2PitCounts) {
+
         for(int i = 0; i < 6; i++) {
-            this.player1PitButtons[i].setStones(player1PitCounts[i]);
-            this.player2PitButtons[i].setStones(player2PitCounts[i]);
+            this.player1PitButtons[i].setStones(player1PitCounts.get(i));
+            this.player2PitButtons[i].setStones(player2PitCounts.get(i));
         }
     }
 
@@ -172,7 +202,8 @@ public class MancalaView extends JFrame {
      * @param player2MancalaCount
      * @param player1MancalaCount
      */
-    public void updateBoard(int[] player2PitCounts, int []player1PitCounts, int player2MancalaCount, int player1MancalaCount) {
+    public void updateBoard(List<Integer> player1PitCounts, List<Integer> player2PitCounts,
+                            int player1MancalaCount, int player2MancalaCount) {
         updatePits(player1PitCounts,player2PitCounts);
         updateMancalas(player1MancalaCount, player2MancalaCount);
     }
@@ -192,5 +223,13 @@ public class MancalaView extends JFrame {
             return stones;
         }
         return stones;
+    }
+
+    /**
+     *
+     * @param error_message
+     */
+    public void toastError(String error_message) {
+        JOptionPane.showMessageDialog(this, error_message);
     }
 }

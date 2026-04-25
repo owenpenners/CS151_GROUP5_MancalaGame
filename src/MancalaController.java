@@ -26,8 +26,15 @@ public class MancalaController implements ChangeListener {
         this.model.addChangeListener(this);
         this.view = view;
 
-        model.fillPits(view.promptForStartingStones());
+        this.attachPitListeners();
+        this.attachUndoListener();
+        this.attachNewGameListener();
+    }
 
+    /**
+     *
+     */
+    public void attachPitListeners() {
         // Future work:
         // - Attach listeners to pit buttons
         // - Handle user clicks
@@ -43,23 +50,50 @@ public class MancalaController implements ChangeListener {
                     case "P1" -> model.moveStones(MancalaModel.Player.PLAYER_1, n);
                     case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
                 }
-    //            String cmd = e.getActionCommand();
-    //
-    //
-    //            if(cmd.startsWith("P2_")) {
-    //                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
-    //                System.out.println("Player 2 clicked " + pit);
-    //                // call moveStones
-    //                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
-    //                //model.moveStones(pit);
-    //            } else if(cmd.startsWith("P1_")) {
-    //                int pit = Integer.parseInt(cmd.substring(3));
-    //                System.out.println("Player 1 clicked " + pit);
-    //                // call moveStones
-    //                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
-    //                //model.moveStones(pit);
-    //            }
-    //            MancalaController.this.stateChanged(new ChangeEvent(this));
+                //            String cmd = e.getActionCommand();
+                //
+                //
+                //            if(cmd.startsWith("P2_")) {
+                //                int pit = 6 - Integer.parseInt(cmd.substring(3)) -1;
+                //                System.out.println("Player 2 clicked " + pit);
+                //                // call moveStones
+                //                model.moveStones(MancalaModel.Player.PLAYER_2,pit);
+                //                //model.moveStones(pit);
+                //            } else if(cmd.startsWith("P1_")) {
+                //                int pit = Integer.parseInt(cmd.substring(3));
+                //                System.out.println("Player 1 clicked " + pit);
+                //                // call moveStones
+                //                model.moveStones(MancalaModel.Player.PLAYER_1,pit);
+                //                //model.moveStones(pit);
+                //            }
+                //            MancalaController.this.stateChanged(new ChangeEvent(this));
+            }
+        });
+    }
+
+    /**
+     *
+     */
+    public void attachUndoListener() {
+        this.view.addUndoListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    MancalaController.this.model.undo();
+                }
+                catch (IllegalStateException err) {
+                    view.toastError(err.getMessage());
+                }
+            }
+        });
+    }
+
+    public void attachNewGameListener() {
+        this.view.addNewGameListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MancalaController.this.model.resetBoard();
+                model.setPits(view.promptForStartingStones());
             }
         });
     }
@@ -68,24 +102,8 @@ public class MancalaController implements ChangeListener {
      * Refresh the mancala board by getting pit counts
      */
     public void stateChanged(ChangeEvent e) {
-        // Get Player 2 pit counts from the model
-        int[] player2PitCounts = model.getStonesOfPits(MancalaModel.Player.PLAYER_2)
-                .stream().mapToInt(i -> i).toArray();
-        // Get Player 1 pit counts from the model
-        int[] player1PitCounts = model.getStonesOfPits(MancalaModel.Player.PLAYER_1)
-                .stream().mapToInt(i -> i).toArray();
-        
-        // Get the number of stones in each player's Mancala
-        int player2MancalaCount = model.getStonesFromEnd(MancalaModel.Player.PLAYER_2);
-        int player1MancalaCount = model.getStonesFromEnd(MancalaModel.Player.PLAYER_1);
-        
-        /* can be used for debugging, print to console no longer needed
-        System.out.println("Player A Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_1));
-        System.out.println("Player B Mancala Score: " + model.getStonesFromMancala(MancalaModel.Player.PLAYER_2));
-        */
-
+        MancalaModel.MancalaRecord record = ((MancalaModel) e.getSource()).getRecord();
         // Tell the view to update what is shown on screen
-        view.updateBoard(player2PitCounts, player1PitCounts,
-            player2MancalaCount, player1MancalaCount);
+        view.updateBoard(record.p1_side(), record.p2_side(), record.p1_end(), record.p2_end());
     }
 }
