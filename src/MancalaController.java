@@ -18,9 +18,14 @@ import java.util.List;
  * <ul>- Refresh/update the view after changes</ul>
  */
 public class MancalaController implements ChangeListener {
-    private MancalaModel model;
-    private MancalaView view;
+    private final MancalaModel model;
+    private final MancalaView view;
 
+    /**
+     *
+     * @param model
+     * @param view
+     */
     public MancalaController(MancalaModel model, MancalaView view) {
         this.model = model;
         this.model.addChangeListener(this);
@@ -73,6 +78,9 @@ public class MancalaController implements ChangeListener {
         });
     }
 
+    /**
+     *
+     */
     public void attachNewGameListener() {
         this.view.addNewGameListener(e -> {
             MancalaController.this.model.resetBoard();

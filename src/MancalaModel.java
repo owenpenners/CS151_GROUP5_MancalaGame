@@ -11,12 +11,12 @@ public class MancalaModel {
     // constants
     public enum Player {PLAYER_1, PLAYER_2}
     private final static int PITS_PER_SIDE = 6;
-    private int MAX_NUMBER_OF_UNDOS = 3;
+    private final int MAX_NUMBER_OF_UNDOS = 3;
 
     // state of the board
     private Player currentPlayer;
     private MancalaRecord previousState = null;
-    private int countUndos = 0;
+    private int undoCount = 0;
     final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
     final private HashMap<Player, Integer> ends = new HashMap<>();
 
@@ -220,7 +220,7 @@ public class MancalaModel {
      */
     private void swapPlayer() {
         this.currentPlayer = getOtherPlayer(this.currentPlayer);
-        this.countUndos = 0;
+        this.undoCount = 0;
     }
 
     /**
@@ -392,10 +392,10 @@ public class MancalaModel {
     public void undo() {
         if (this.previousState == null)
             throw new IllegalStateException("Cannot undo.");
-        if (this.countUndos >= this.MAX_NUMBER_OF_UNDOS)
+        if (this.undoCount >= this.MAX_NUMBER_OF_UNDOS)
             throw new IllegalStateException("No undo's left.");
         this.pasteState(this.previousState);
-        this.countUndos += 1;
+        this.undoCount += 1;
         this.previousState = null;
         this.updateChangeListeners();
     }

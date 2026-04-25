@@ -5,18 +5,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ *
+ */
 public class MancalaView extends JFrame {
-    private JPanel player2Mancala;
-    private JPanel player1Mancala;
+    private final JPanel player2Mancala;
+    private final JPanel player1Mancala;
 
-    private PitButton[] player1PitButtons;
-    private PitButton[] player2PitButtons;
+    private final PitButton[] player1PitButtons;
+    private final PitButton[] player2PitButtons;
 
-    private JButton undoButton;
-    private JButton newGameButton;
+    private final JButton undoButton;
+    private final JButton newGameButton;
 
-    public record MancalaRecord(List<Integer> p1_side, List<Integer> p2_side, int p1_end, int p2_end) {}
-
+    /**
+     * 
+     */
     public MancalaView() {
         super("Mancala Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
