@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -219,15 +220,19 @@ public class MancalaView extends JFrame {
      */
     public int promptForStartingStones() {
         String input = JOptionPane.showInputDialog("Enter number of stones per pit (3 or 4):");
-
-        int stones = Integer.parseInt(input);
+        int DEFAULT_STONES = 4;
         // simple validation
-        if (stones != 3 && stones != 4) {
-            JOptionPane.showMessageDialog(this, "Invalid input. Defaulting to 4.");
-            stones = 4;
-            return stones;
+        try {
+            return switch (input) {
+                case "3" -> 3;
+                case "4" -> 4;
+                default -> throw new IllegalStateException("Unexpected value: " + input);
+            };
         }
-        return stones;
+        catch (IllegalStateException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Defaulting to 4.");
+            return DEFAULT_STONES;
+        }
     }
 
     /**

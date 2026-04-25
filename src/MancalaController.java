@@ -1,9 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 /**
  * MancalaController
@@ -55,7 +52,7 @@ public class MancalaController implements ChangeListener {
                     case "P2" -> model.moveStones(MancalaModel.Player.PLAYER_2, n);
                 }
             }
-            catch (IllegalArgumentException err) {
+            catch (IllegalArgumentException | IllegalStateException err) {
                 System.err.println(err.getMessage());
                 view.toastError(err.getMessage());
             }

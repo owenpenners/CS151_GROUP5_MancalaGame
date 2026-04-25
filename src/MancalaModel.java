@@ -23,7 +23,8 @@ public class MancalaModel {
 
 
     // record to save state / return state of board
-    public record MancalaRecord(Player currentPlayer, List<Integer> p1_side, List<Integer> p2_side,
+    public record MancalaRecord(boolean gameOver, Player currentPlayer,
+                                List<Integer> p1_side, List<Integer> p2_side,
                                 int p1_end, int p2_end) {}
 
     /**
@@ -73,7 +74,7 @@ public class MancalaModel {
         int p1_end = this.getStonesFromEnd(Player.PLAYER_1);
         int p2_end = this.getStonesFromEnd(Player.PLAYER_2);
 
-        return new MancalaRecord(currentPlayer, p1_side, p2_side, p1_end, p2_end);
+        return new MancalaRecord(gameOver, currentPlayer, p1_side, p2_side, p1_end, p2_end);
     }
 
     /**
@@ -247,8 +248,7 @@ public class MancalaModel {
             pitSide = getOtherPlayer(pitSide);
         }
         this.endTurn(pitSide, pitNumber);
-        if (this.checkGameOver())
-            endGame();
+        if (this.checkGameOver()) endGame();
     }
 
     /**
@@ -330,7 +330,7 @@ public class MancalaModel {
     /**
      * Overloaded method of {@link MancalaModel#moveStones(int pitNumber)}.
      *
-     * @param player    {@link Player} checks if player is valid.
+     * @param player {@link Player} checks if player is valid.
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed).
      * @throws IllegalArgumentException if not the right player's turn.
      * @throws IllegalArgumentException if the pit selected has no stones in it.
@@ -348,6 +348,8 @@ public class MancalaModel {
      *
      */
     public void undo() {
+        if (this.gameOver)
+            throw new IllegalStateException("Game is over.");
         if (this.previousState == null)
             throw new IllegalStateException("Cannot undo.");
         if (this.undoCount >= this.MAX_NUMBER_OF_UNDOS)
