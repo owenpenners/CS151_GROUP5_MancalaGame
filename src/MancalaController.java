@@ -100,10 +100,8 @@ public class MancalaController implements ChangeListener {
                 case "Color Board":
                     System.out.print("got here");
                     view.setPitDisplayStrategy(new ColorConcretePitStrategy());
-
                     break;
             }
-            view.repaint();
         });
     }
 
