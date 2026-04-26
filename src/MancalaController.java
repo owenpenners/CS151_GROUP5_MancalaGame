@@ -1,6 +1,7 @@
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * MancalaController
@@ -31,6 +32,7 @@ public class MancalaController implements ChangeListener {
         this.attachPitListeners();
         this.attachUndoListener();
         this.attachNewGameListener();
+        this.attachStyleChoiceListener();
     }
 
     /**
@@ -81,6 +83,27 @@ public class MancalaController implements ChangeListener {
     public void attachNewGameListener() {
         this.view.addNewGameListener(e -> {
             model.newGame(view.promptForStartingStones());
+        });
+    }
+
+    /**
+     * Attach an ActionListener to the StyleChoiceComboBox
+     */
+    public void attachStyleChoiceListener() {
+        this.view.addStyleChoiceComboBoxListener(e -> {
+            String styleChoice = view.getSelectedStyleChoice();
+
+            switch(styleChoice) {
+                case "Default Board":
+                    view.setPitDisplayStrategy(new DefaultConcretePitStrategy());
+                    break;
+                case "Color Board":
+                    System.out.print("got here");
+                    view.setPitDisplayStrategy(new ColorConcretePitStrategy());
+
+                    break;
+            }
+            view.repaint();
         });
     }
 

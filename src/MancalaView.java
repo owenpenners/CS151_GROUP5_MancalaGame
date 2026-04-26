@@ -1,15 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
  */
 public class MancalaView extends JFrame {
+    private final String[] STYLES = {"Default Board", "Color Board"};
+
     private final JPanel player2Mancala;
     private final JPanel player1Mancala;
 
@@ -19,6 +18,10 @@ public class MancalaView extends JFrame {
     private final JButton undoButton;
     private final JButton newGameButton;
 
+    private final JComboBox<String> styleChoiceComboBox;
+
+    //Set strategy to default style
+    private PitDisplayStrategy strategy = new DefaultConcretePitStrategy();
     /**
      *
      */
@@ -51,8 +54,11 @@ public class MancalaView extends JFrame {
         JPanel bottomPanel = new JPanel();
         this.undoButton = new JButton("Undo");
         this.newGameButton = new JButton("New Game");
+        this.styleChoiceComboBox = new JComboBox<>(STYLES);
+
         bottomPanel.add(undoButton);
         bottomPanel.add(newGameButton);
+        bottomPanel.add(styleChoiceComboBox);
 
         add(centerPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -85,7 +91,7 @@ public class MancalaView extends JFrame {
         PitButton[] buttons = new PitButton[6];
 
         for (int i = 0; i < 6; i++) {
-            buttons[i] = createPitButton(player, i);
+            buttons[i] = createPitButton(player, i, this.strategy);
         }
 
         if (reverse) {
@@ -143,8 +149,8 @@ public class MancalaView extends JFrame {
      * @param pitNumber
      * @return
      */
-    private PitButton createPitButton(String player, int pitNumber) {
-        return new PitButton(player, pitNumber);
+    private PitButton createPitButton(String player, int pitNumber, PitDisplayStrategy strategy) {
+        return new PitButton(player, pitNumber, strategy);
     }
 
     /**
@@ -173,6 +179,20 @@ public class MancalaView extends JFrame {
      */
     public void addNewGameListener(ActionListener listener) {
         this.newGameButton.addActionListener(listener);
+    }
+
+    /**
+     *
+     * @param listener
+     */
+    public void addStyleChoiceComboBoxListener(ActionListener listener) {styleChoiceComboBox.addActionListener(listener);}
+
+    /**
+     * Return selected style choice
+     * @return - a string representing which list item is selected
+     */
+    public String getSelectedStyleChoice() {
+        return (String) styleChoiceComboBox.getSelectedItem();
     }
 
     /**
@@ -212,6 +232,21 @@ public class MancalaView extends JFrame {
                             int player1MancalaCount, int player2MancalaCount) {
         updatePits(player1PitCounts,player2PitCounts);
         updateMancalas(player1MancalaCount, player2MancalaCount);
+    }
+
+    /**
+     * Sets each PitButton on the board to a PitDisplayStrategy
+     * @param strategy - a PitDisplayStrategy
+     */
+    public void setPitDisplayStrategy(PitDisplayStrategy strategy) {
+        for(PitButton pit: player1PitButtons){
+            pit.setDisplayStrategy(strategy);
+        }
+
+        for(PitButton pit: player2PitButtons){
+            pit.setDisplayStrategy(strategy);
+        }
+        repaint();
     }
 
     /**
