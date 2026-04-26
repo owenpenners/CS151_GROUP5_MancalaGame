@@ -38,6 +38,7 @@ public class PitButton extends JButton {
 
     public void setDisplayStrategy(PitDisplayStrategy displayStrategy) {
         this.displayStrategy = displayStrategy;
+        repaint();
     }
 
     @Override
