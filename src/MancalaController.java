@@ -61,7 +61,7 @@ public class MancalaController implements ChangeListener {
     }
 
     /**
-     *
+     * Attach a listener to the undo button
      */
     public void attachUndoListener() {
         this.view.addUndoListener(e -> {
@@ -76,7 +76,7 @@ public class MancalaController implements ChangeListener {
     }
 
     /**
-     *
+     * Attach a listener to the new game button which prompts for starting stones when clicked
      */
     public void attachNewGameListener() {
         this.view.addNewGameListener(e -> {

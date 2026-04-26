@@ -6,6 +6,11 @@ public class PitButton extends JButton {
     private final String player;
     private final int pitNumber;
 
+    /**
+     * Create a PitButton with player and a pitNumber
+     * @param player
+     * @param pitNumber
+     */
     public PitButton(String player, int pitNumber) {
         this.player = player;
         this.pitNumber = pitNumber;
@@ -29,6 +34,10 @@ public class PitButton extends JButton {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        //Draw pit label
+        String pitString = (getPlayer().equals("P1") ? "A": "B") + (pitNumber+1);
+        g2.drawString(pitString,20, 20);
 
         if(stones == 0) return;
 
