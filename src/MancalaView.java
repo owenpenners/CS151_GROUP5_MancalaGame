@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class MancalaView extends JFrame {
     private final String[] STYLES = {"Default Board", "Color Board"};
-
+    private final PitDisplayStrategy DEFAULT_STRATEGY = new DefaultConcretePitStrategy();
     private final JPanel player2Mancala;
     private final JPanel player1Mancala;
 
@@ -20,8 +20,7 @@ public class MancalaView extends JFrame {
 
     private final JComboBox<String> styleChoiceComboBox;
 
-    //Set strategy to default style
-    private PitDisplayStrategy strategy = new DefaultConcretePitStrategy();
+
     /**
      *
      */
@@ -91,7 +90,7 @@ public class MancalaView extends JFrame {
         PitButton[] buttons = new PitButton[6];
 
         for (int i = 0; i < 6; i++) {
-            buttons[i] = createPitButton(player, i, this.strategy);
+            buttons[i] = createPitButton(player, i, this.DEFAULT_STRATEGY);
         }
 
         if (reverse) {
