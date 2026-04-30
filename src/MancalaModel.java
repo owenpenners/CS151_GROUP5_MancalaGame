@@ -22,6 +22,17 @@ public class MancalaModel {
     final private HashMap<Player, Integer> ends = new HashMap<>();
 
     // record to save state / return state of board
+
+    /**
+     *
+     * @param gameOver
+     * @param currentPlayer
+     * @param undoLeft
+     * @param p1_side
+     * @param p2_side
+     * @param p1_end
+     * @param p2_end
+     */
     public record MancalaRecord(boolean gameOver, Player currentPlayer, int undoLeft,
                                 List<Integer> p1_side, List<Integer> p2_side,
                                 int p1_end, int p2_end) {}
@@ -74,7 +85,9 @@ public class MancalaModel {
 
         int undoLeft = MAX_NUMBER_OF_UNDOS - undoCount;
 
-        return new MancalaRecord(gameOver, currentPlayer, undoLeft, p1_side, p2_side, p1_end, p2_end);
+        // ensure immutable lists
+        return new MancalaRecord(gameOver, currentPlayer, undoLeft, List.copyOf(p1_side), List.copyOf(p2_side),
+                p1_end, p2_end);
     }
 
     /**
