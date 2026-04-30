@@ -94,13 +94,8 @@ public class MancalaController implements ChangeListener {
             String styleChoice = view.getSelectedStyleChoice();
 
             switch(styleChoice) {
-                case "Default Board":
-                    view.setPitDisplayStrategy(new DefaultConcretePitStrategy());
-                    break;
-                case "Color Board":
-                    System.out.print("got here");
-                    view.setPitDisplayStrategy(new ColorConcretePitStrategy());
-                    break;
+                case "Default Board" -> view.setPitDisplayStrategy(new DefaultConcretePitStrategy());
+                case "Color Board" -> view.setPitDisplayStrategy(new ColorConcretePitStrategy());
             }
         });
     }
