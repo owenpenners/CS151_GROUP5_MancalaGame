@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Model class that represents the backend of a Mancala game.
+ * <p>
+ * Constructor:
+ */
 public class MancalaModel {
     // mvc connections
     private final ArrayList<ChangeListener> listeners = new ArrayList<>();
@@ -21,25 +26,24 @@ public class MancalaModel {
     final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
     final private HashMap<Player, Integer> ends = new HashMap<>();
 
-    // record to save state / return state of board
-
     /**
-     *
-     * @param gameOver
-     * @param currentPlayer
-     * @param undoLeft
-     * @param p1_side
-     * @param p2_side
-     * @param p1_end
-     * @param p2_end
+     * MancalaRecord is an immutable object that records information about the state of the board. Used to
+     * return the state of the model, or the save the current state of the model.
+     * @param gameOver {@code boolean} true if the mancala game is over.
+     * @param currentPlayer {@link Player} enum type Player of MancalaModel.
+     * @param undoLeft {@code int} number of undo left to the current player.
+     * @param p1_side {@link List} of {@code int} representing the stones in the pits on P1's side.
+     * @param p2_side {@link List} of {@code int} representing the stones in the pits on P2's side.
+     * @param p1_end {@code int} repr. the stones in the mancala on P1's side.
+     * @param p2_end {@code int} repr. the stones in the mancala on P2's side.
      */
     public record MancalaRecord(boolean gameOver, Player currentPlayer, int undoLeft,
                                 List<Integer> p1_side, List<Integer> p2_side,
                                 int p1_end, int p2_end) {}
 
     /**
-     * Construct the Mancala backend.
-     * Postcondition: set the starting player to P1; construct the MancalaBoard with pits and the end mancalas.
+     * Construct the Mancala backend; for both Player1 and Player2, create sides, and populate them with
+     * empty {@link MancalaPit}, as well as instantiating empty ends (mancalas).
      */
     public MancalaModel() {
         for (Player player : Player.values()) {
@@ -51,15 +55,15 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param list
+     * Connect a change listener to this model object.
+     * @param listener {@link ChangeListener} to add to the listeners to update when a change occurs.
      */
-    public void addChangeListener(ChangeListener list) {
-        this.listeners.add(list);
+    public void addChangeListener(ChangeListener listener) {
+        this.listeners.add(listener);
     }
 
     /**
-     *
+     * Send an update event to the change listeners stored in the model.
      */
     private void updateChangeListeners() {
         ChangeEvent event = new ChangeEvent(this);
@@ -68,7 +72,7 @@ public class MancalaModel {
     }
 
     /**
-     *
+     * Generate a {@link MancalaRecord} object, representing the current state of the Mancala board.
      * @return the state of the board as a {@link MancalaRecord}
      */
     public MancalaRecord getRecord() {
@@ -91,8 +95,8 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param record
+     * Using a MancalaRecord, paste/load the state of the game board into the Mancala board.
+     * @param record {@link MancalaRecord}
      */
     private void pasteState(MancalaRecord record) {
         for (Player player : Player.values()) {
@@ -114,7 +118,8 @@ public class MancalaModel {
     }
 
     /**
-     * Clear out the stones from the pits.
+     * Clear out the stones from the pits and end for both players. Used in conjunction with
+     * {@link MancalaModel#newGame(int)} to generate a new board.
      */
     private void clearBoard() {
         for (Player player : board.keySet()) {
@@ -125,9 +130,10 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Return a list of MancalaPits belonging to a certain player.
+     * (Shorten the syntax of this.board.get(player) to this.getPits(player))
+     * @param player {@code Player} Player1 or Player2
+     * @return {@code List} of {@code MancalaPit} representing the pits on that player's side.
      */
     private List<MancalaPit> getPits(Player player) {
         return this.board.get(player);
@@ -135,8 +141,8 @@ public class MancalaModel {
 
     /**
      * Return the pit associated with the player and the pitNumber (0-indexed).
-     *
-     * @param player    {@link Player} either 1 or 2 representing Player 1 or Player 2.
+     * (Shorten the syntax of this.board.get(player).get(pitNumber) to this.getPit(player, pitNumber))
+     * @param player {@link Player} either 1 or 2 representing Player 1 or Player 2.
      * @param pitNumber {@code int} range [0, 5 or PITS_PER_SIDE], 0-indexed.
      * @return {@code int} stones in that pit.
      * @throws IllegalArgumentException if pitNumber argument is invalid.
@@ -151,9 +157,10 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param player
-     * @return
+     * Return the sum of the pits on a players side. Used for {@link MancalaModel#endGame()} in order to
+     * calculate how much stones are to be added to the mancala at the end of a game.
+     * @param player {@link Player} representing the player's side to sum.
+     * @return {@code int} representing the total amount of stones in the pits of that side.
      */
     private int sumPits(Player player) {
         int sum = 0;
@@ -163,9 +170,9 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param player
-     * @param stones
+     * Increases the end stone count of a player's mancala.
+     * @param player {@link Player} repr. the side to increment the side.
+     * @param stones {@code int} repr. the stones to add to the mancala.
      */
     private void addStonesToEnd(Player player, int stones) {
         int newStoneCount = this.ends.get(player) + stones;
@@ -173,9 +180,10 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param player
-     * @param stones
+     * Alternative method to {@link MancalaModel#addStonesToEnd(Player, int)} to change end stones.
+     * Currently used to set end stones for {@link MancalaModel#pasteState(MancalaRecord)}
+     * @param player {@link Player} repr. the side to increment the side.
+     * @param stones {@code int} repr. the stones to set mancala count to.
      */
     private void setStonesOfEnd(Player player, int stones) {
         this.ends.put(player, stones);
@@ -183,7 +191,6 @@ public class MancalaModel {
 
     /**
      * Returns the stones in a player's end.
-     *
      * @param player {@code int} either 1 or 2 representing Player 1 or Player 2.
      * @return {@code int} stones from that player's end
      */
@@ -202,7 +209,6 @@ public class MancalaModel {
 
     /**
      * Static function that returns the opposite player.
-     *
      * @param player {@code Player} initial player.
      * @return {@code Player} opposite player of the passed-in player.
      */
@@ -218,9 +224,8 @@ public class MancalaModel {
      * Given a selected pit number of the current player's turn, grab all the stones and distribute it across
      * the pits. If the last mancala was dropped in a pit belonging to the player, take another turn. If it lands
      * in an empty hole, and the opponent has stones in the opposing pit, collect both stones.
-     *
+     * <p>
      * Precondition: assumes the game is not over.
-     *
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed)
      * @throws IllegalArgumentException if pit selected has no stones in it.
      * @throws IllegalArgumentException if out-of-bounds pit is selected.
