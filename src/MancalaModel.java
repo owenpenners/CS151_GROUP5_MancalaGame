@@ -223,7 +223,8 @@ public class MancalaModel {
     /**
      * Given a selected pit number of the current player's turn, grab all the stones and distribute it across
      * the pits. If the last mancala was dropped in a pit belonging to the player, take another turn. If it lands
-     * in an empty hole, and the opponent has stones in the opposing pit, collect both stones.
+     * in an empty hole, and the opponent has stones in the opposing pit, collect both stones. Logic state continues
+     * into {@link MancalaModel#endTurn} and {@link MancalaModel#endGame()}.
      * <p>
      * Precondition: assumes the game is not over.
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed)
@@ -233,7 +234,6 @@ public class MancalaModel {
     private void moveStones(int pitNumber) throws IllegalArgumentException {
         if (this.getPit(this.currentPlayer, pitNumber).getStones() == 0)
             throw new IllegalArgumentException("Invalid hole; hole contains no stones.");
-
 
         // save state of board
         this.previousState = this.getRecord();
@@ -270,9 +270,11 @@ public class MancalaModel {
     }
 
     /**
-     *
-     * @param pitSide
-     * @param currentPitNum
+     * Resolve the end of turn logic, where the next player is determined, or the empty hole logic is resolved.
+     * Continuation of {@link MancalaModel#moveStones(int)}.
+     * Precondition: currentPitNum is valid, since endTurn is a continuation of moveStones.
+     * @param pitSide {@link Player} Current player's turn.
+     * @param currentPitNum {@code int} current pit that moveStones() ended on.
      */
     private void endTurn(Player pitSide, int currentPitNum) {
         // take another turn if turn ends in the Mancala end;
@@ -304,7 +306,8 @@ public class MancalaModel {
     }
 
     /**
-     *
+     * Check the condition that a side has no stones left in its pits. If it is, return true for game over.
+     * @return {@code boolean} true if there is a side with no stones left in its pits.
      */
     private boolean checkGameOver() {
         for (Player player : Player.values())
@@ -314,7 +317,9 @@ public class MancalaModel {
     }
 
     /**
-     *
+     * End the game. Only called from {@link MancalaModel#moveStones(int)}. Cycles through each side,
+     * adding all stones in each pit to that side's mancala. Afterward, set the gameOver flag to true, and
+     * clear out the save state of the board.
      */
     private void endGame() {
         for (Player player : Player.values()) {
@@ -347,7 +352,6 @@ public class MancalaModel {
 
     /**
      * Overloaded method of {@link MancalaModel#moveStones(int pitNumber)}.
-     *
      * @param player {@link Player} checks if player is valid.
      * @param pitNumber {@code int} representing the pit to perform a mancala move on (0-indexed).
      * @throws IllegalArgumentException if not the right player's turn.
@@ -363,7 +367,9 @@ public class MancalaModel {
     }
 
     /**
-     *
+     * Undo method; restores the board to the previous state before moveStones change occurred.
+     * @throws IllegalStateException if the game is over, or the previous state is empty,
+     * or undo count has been exceeded.
      */
     public void undo() {
         if (this.gameOver)
