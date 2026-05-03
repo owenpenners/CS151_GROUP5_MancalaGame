@@ -9,6 +9,7 @@ import java.util.List;
 public class MancalaView extends JFrame {
     private final String[] STYLES = {"Default Board", "Color Board"};
     private final PitDisplayStrategy DEFAULT_STRATEGY = new DefaultConcretePitStrategy();
+
     private final JPanel player2Mancala;
     private final JPanel player1Mancala;
 
@@ -22,7 +23,7 @@ public class MancalaView extends JFrame {
 
 
     /**
-     *
+     * Initializes and creates initial window with default View strategy
      */
     public MancalaView() {
         super("Mancala Game");
@@ -106,47 +107,11 @@ public class MancalaView extends JFrame {
         return buttons;
     }
 
-//    private JButton createPitJButton(String player, int pitNumber, int stones) {
-//        JButton pit = new JButton() {
-//            public String player = stones;
-//            @Override
-//            protected void paintComponent(Graphics g) {
-//                super.paintComponent(g);
-//                Graphics2D g2 = (Graphics2D) g;
-//
-//
-//                // Paint stones in
-//                if (stones == 0) return;
-//                int stoneSize = 20;
-//                int padding = 8;
-//                int cols = (int) Math.ceil(Math.sqrt(stones));
-//                int rows = (int) Math.ceil((double) stones / cols);
-//
-//                int gridW = (getWidth() - 2 * padding) / cols;
-//                int gridH = (getHeight() - 2 * padding) / rows;
-//
-//                int count = 0;
-//
-//                for (int r = 0; r < rows; r++) {
-//                    for (int c = 0; c < cols; c++) {
-//                        if (count >= stones) break;
-//                        int x = padding + c * gridW + (gridW - stoneSize) / 2;
-//                        int y = padding + r * gridH + (gridH - stoneSize) / 2;
-//
-//                        g2.fillOval(x, y, stoneSize, stoneSize);
-//                        count++;
-//                    }
-//                }
-//            }
-//        };
-//        return pit;
-//    }
-
     /**
-     *
+     * Create a PitButton with a specific player, pit number, and strategy
      * @param player
      * @param pitNumber
-     * @return
+     * @return a PitButton
      */
     private PitButton createPitButton(String player, int pitNumber, PitDisplayStrategy strategy) {
         return new PitButton(player, pitNumber, strategy);

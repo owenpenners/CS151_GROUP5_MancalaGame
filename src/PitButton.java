@@ -18,24 +18,42 @@ public class PitButton extends JButton {
         this.stones = 0;
         this.displayStrategy = displayStrategy;
     }
-
-
-
+    
+    /**
+     * Get string representation of this PitButton's player
+     * @return a String representing a plyer
+     */
     public String getPlayer() {
         return this.player;
     }
 
+    /**
+     * Return pit number of this PitButton
+     * @return an int representing pit number
+     */
     public int getPit() {
         return this.pitNumber;
     }
 
+    /**
+     * Set the stones to a new value and repaints PitButton
+     * @param stones - int value to set new stones to
+     */
     public void setStones(int stones) {
         this.stones = stones;
         repaint();
     }
 
+    /**
+     * Get number of stones
+     * @return int representing number of stones in PitButton
+     */
     public int getStones() {return this.stones;}
 
+    /**
+     * Set the displayStrategy of this PitButton and repaint
+     * @param displayStrategy a display strategy to use
+     */
     public void setDisplayStrategy(PitDisplayStrategy displayStrategy) {
         this.displayStrategy = displayStrategy;
         repaint();
