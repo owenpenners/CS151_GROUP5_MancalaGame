@@ -3,6 +3,5 @@ public class MancalaTest {
         MancalaModel model = new MancalaModel();
         MancalaView view = new MancalaView();
         MancalaController controller = new MancalaController(model, view);
-
     }
 }

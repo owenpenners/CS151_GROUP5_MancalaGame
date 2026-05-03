@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class MancalaStoreComponent extends JPanel {
     private int stones;
-    private BoardDisplayStrategy strategy; // TODO REPLACE WITH BOARD DISPLAY STRATEGY
+    private BoardDisplayStrategy strategy;
 
     public MancalaStoreComponent(int stones, BoardDisplayStrategy strategy) {
         this.stones = stones;
@@ -11,13 +11,24 @@ public class MancalaStoreComponent extends JPanel {
         setOpaque(false);
     }
 
+    /**
+     * Get the number of stones in this store
+     */
     public int getStones() {return this.stones;}
 
+    /**
+     * Set the number of stones of this store
+     * @param stones
+     */
     public void setStones(int stones) {
         this.stones = stones;
         repaint();
     }
 
+    /**
+     * Set this StoreComponent's DisplayStrategy
+     * @param strategy
+     */
     public void setDisplayStrategy(BoardDisplayStrategy strategy) {
         this.strategy = strategy;
         repaint();
