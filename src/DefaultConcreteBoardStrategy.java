@@ -1,6 +1,6 @@
 import java.awt.*;
 
-public class ColorConcretePitStrategy implements PitDisplayStrategy{
+public class DefaultConcreteBoardStrategy implements BoardDisplayStrategy{
     @Override
     public void paintPit(Graphics2D g2, PitButton pit) {
         // Write pit label
@@ -24,7 +24,31 @@ public class ColorConcretePitStrategy implements PitDisplayStrategy{
                 if (count >= pit.getStones()) break;
                 int x = padding + c * gridW + (gridW - stoneSize) / 2;
                 int y = padding + r * gridH + (gridH - stoneSize) / 2;
-                g2.setColor(Color.ORANGE); // basic repaint
+                g2.fillOval(x, y, stoneSize, stoneSize);
+                count++;
+            }
+        }
+    }
+
+    @Override
+    public void paintStore(Graphics2D g2, MancalaStoreComponent store) {
+        if(store.getStones() == 0) return;
+
+        int stoneSize = 20;
+        int padding = 8;
+        int cols = (int) Math.ceil(Math.sqrt(store.getStones()));
+        int rows = (int) Math.ceil((double) store.getStones() / cols);
+
+        int gridW = (store.getWidth() - 2 * padding) / cols;
+        int gridH = (store.getHeight() - 2 * padding) / rows;
+
+        int count = 0;
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (count >= store.getStones()) break;
+                int x = padding + c * gridW + (gridW - stoneSize) / 2;
+                int y = padding + r * gridH + (gridH - stoneSize) / 2;
                 g2.fillOval(x, y, stoneSize, stoneSize);
                 count++;
             }
