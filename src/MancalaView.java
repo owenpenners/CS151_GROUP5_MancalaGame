@@ -8,10 +8,13 @@ import java.util.List;
  */
 public class MancalaView extends JFrame {
     private final String[] STYLES = {"Default Board", "Color Board"};
-    private final PitDisplayStrategy DEFAULT_STRATEGY = new DefaultConcretePitStrategy();
+    private final BoardDisplayStrategy DEFAULT_STRATEGY = new DefaultConcreteBoardStrategy();
 
     private final JPanel player2Mancala;
     private final JPanel player1Mancala;
+    private MancalaStoreComponent player1StoreComponent;
+    private MancalaStoreComponent player2StoreComponent;
+
 
     private final PitButton[] player1PitButtons;
     private final PitButton[] player2PitButtons;
@@ -33,8 +36,8 @@ public class MancalaView extends JFrame {
         setLayout(new BorderLayout());
 
         int DEFAULT_END = 0;
-        player1Mancala = createStorePanel("Mancala A", DEFAULT_END);
-        player2Mancala = createStorePanel("Mancala B", DEFAULT_END);
+        player1Mancala = createStorePanel("Mancala A", DEFAULT_END, true);
+        player2Mancala = createStorePanel("Mancala B", DEFAULT_END, false);
 
         add(player1Mancala, BorderLayout.EAST);
         add(player2Mancala, BorderLayout.WEST);
@@ -71,13 +74,20 @@ public class MancalaView extends JFrame {
      * @param stones - The number of stones in the store
      * @return a JPanel with a JLabel and a border displaying number of stones and title
      */
-    private JPanel createStorePanel(String title, int stones) {
+    private JPanel createStorePanel(String title, int stones, boolean isPlayer1) {
         JPanel storePanel = new JPanel(new BorderLayout());
-        JLabel mancala = new JLabel(String.valueOf(stones), SwingConstants.CENTER);
+        //JLabel mancala = new JLabel(String.valueOf(stones), SwingConstants.CENTER);
+
+        MancalaStoreComponent storeComponent = new MancalaStoreComponent(stones, this.DEFAULT_STRATEGY);
+        if(isPlayer1) {
+            this.player1StoreComponent = storeComponent;
+        } else {
+            this.player2StoreComponent = storeComponent;
+        }
 
         storePanel.setPreferredSize(new Dimension(120, 180));
         storePanel.setBorder(BorderFactory.createTitledBorder(title));
-        storePanel.add(mancala,BorderLayout.CENTER);
+        storePanel.add(storeComponent,BorderLayout.CENTER);
 
         return storePanel;
     }
@@ -113,7 +123,7 @@ public class MancalaView extends JFrame {
      * @param pitNumber
      * @return a PitButton
      */
-    private PitButton createPitButton(String player, int pitNumber, PitDisplayStrategy strategy) {
+    private PitButton createPitButton(String player, int pitNumber, BoardDisplayStrategy strategy) {
         return new PitButton(player, pitNumber, strategy);
     }
 
@@ -181,8 +191,8 @@ public class MancalaView extends JFrame {
         // delete old Mancala JPanels
 //        JLabel player1Mancala = (JLabel) this.player1Mancala.getComponent(0);
 //        foo.setText(Integer.toString(player1MancalaCount));
-        ((JLabel) this.player1Mancala.getComponent(0)).setText(Integer.toString(player1MancalaCount));
-        ((JLabel) this.player2Mancala.getComponent(0)).setText(Integer.toString(player2MancalaCount));
+        player1StoreComponent.setStones(player1MancalaCount);
+        player2StoreComponent.setStones(player2MancalaCount);
     }
 
     /**
@@ -199,10 +209,10 @@ public class MancalaView extends JFrame {
     }
 
     /**
-     * Sets each PitButton on the board to a PitDisplayStrategy
-     * @param strategy - a PitDisplayStrategy
+     * Sets each PitButton and MancalaStoreComponent on the board to a BoardDisplayStrategy
+     * @param strategy - a BoardDisplayStrategy
      */
-    public void setPitDisplayStrategy(PitDisplayStrategy strategy) {
+    public void setBoardDisplayStrategy(BoardDisplayStrategy strategy) {
         for(PitButton pit: player1PitButtons){
             pit.setDisplayStrategy(strategy);
         }
@@ -210,6 +220,9 @@ public class MancalaView extends JFrame {
         for(PitButton pit: player2PitButtons){
             pit.setDisplayStrategy(strategy);
         }
+        player1StoreComponent.setDisplayStrategy(strategy);
+        player2StoreComponent.setDisplayStrategy(strategy);
+
         repaint();
     }
 
