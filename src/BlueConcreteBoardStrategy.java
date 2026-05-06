@@ -21,6 +21,10 @@ public class BlueConcreteBoardStrategy implements BoardDisplayStrategy{
         g2.setColor(Color.BLACK);
         g2.draw(diamond);
 
+        // Write pit label
+        String pitString = (pit.getPlayer().equals("P1") ? "A" : "B") + (pit.getPit() + 1);
+        g2.drawString(pitString, 20, 20);
+
         Shape oldClip = g2.getClip();
         g2.setClip(diamond);
         drawStones(g2, pit.getStones(), pit.getWidth(), pit.getHeight(), Color.WHITE);
