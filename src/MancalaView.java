@@ -7,7 +7,7 @@ import java.util.List;
  *
  */
 public class MancalaView extends JFrame {
-    private final String[] STYLES = {"Default Board", "Color Board"};
+    private final String[] STYLES = {"Default Board", "Color Board", "Blue Board"};
     private final BoardDisplayStrategy DEFAULT_STRATEGY = new DefaultConcreteBoardStrategy();
 
     private final JPanel player2Mancala;
