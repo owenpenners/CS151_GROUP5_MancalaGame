@@ -5,20 +5,20 @@ public class PitButton extends JButton {
     private int stones;
     private final String player;
     private final int pitNumber;
-    private PitDisplayStrategy displayStrategy;
+    private BoardDisplayStrategy displayStrategy;
 
     /**
      * Create a PitButton with player and a pitNumber
      * @param player
      * @param pitNumber
      */
-    public PitButton(String player, int pitNumber, PitDisplayStrategy displayStrategy) {
+    public PitButton(String player, int pitNumber, BoardDisplayStrategy displayStrategy) {
         this.player = player;
         this.pitNumber = pitNumber;
         this.stones = 0;
         this.displayStrategy = displayStrategy;
     }
-    
+
     /**
      * Get string representation of this PitButton's player
      * @return a String representing a plyer
@@ -54,7 +54,7 @@ public class PitButton extends JButton {
      * Set the displayStrategy of this PitButton and repaint
      * @param displayStrategy a display strategy to use
      */
-    public void setDisplayStrategy(PitDisplayStrategy displayStrategy) {
+    public void setDisplayStrategy(BoardDisplayStrategy displayStrategy) {
         this.displayStrategy = displayStrategy;
         repaint();
     }
