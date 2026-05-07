@@ -26,6 +26,7 @@ public class MancalaModel {
     private boolean gameOver = true;
     private Player currentPlayer = Player.PLAYER_1;;
     private MancalaRecord previousState = null;
+    private Player currentPlayerUndo = currentPlayer;
     private int undoCount = 0;
     final private HashMap<Player, ArrayList<MancalaPit>> board = new HashMap<>();
     final private HashMap<Player, Integer> ends = new HashMap<>();
@@ -35,7 +36,7 @@ public class MancalaModel {
      * return the state of the model, or the save the current state of the model.
      * @param gameOver {@code boolean} true if the mancala game is over.
      * @param currentPlayer {@link Player} enum type Player of MancalaModel.
-     * @param undoLeft {@code int} number of undo left to the current player.
+     * @param undoLeft {@code int} number of undo left to current player.
      * @param p1_side {@link List} of {@code int} representing the stones in the pits on P1's side.
      * @param p2_side {@link List} of {@code int} representing the stones in the pits on P2's side.
      * @param p1_end {@code int} repr. the stones in the mancala on P1's side.
@@ -203,12 +204,11 @@ public class MancalaModel {
     }
 
     /**
-     * Swap players by calling the static getOtherPlayer function. Refreshes Undo Limit.
+     * Swap players by calling the static getOtherPlayer function.
      * Postcondition: players are swapped for the game state.
      */
     private void swapPlayer() {
         this.currentPlayer = getOtherPlayer(this.currentPlayer);
-        this.undoCount = 0;
     }
 
     /**
@@ -241,6 +241,12 @@ public class MancalaModel {
 
         // save state of board
         this.previousState = this.getRecord();
+
+        // reset undo's if different player
+        if (this.currentPlayerUndo != currentPlayer) {
+            this.currentPlayerUndo = currentPlayer;
+            this.undoCount = 0;
+        }
 
         /*
          * Advance to next pit, then deposit stone if it is a valid pit.
@@ -345,6 +351,8 @@ public class MancalaModel {
     public void newGame(int startingStones) {
         this.clearBoard();
         this.currentPlayer = Player.PLAYER_1;
+        this.undoCount = 0;
+        this.currentPlayerUndo = Player.PLAYER_1;
         for (Player player : board.keySet()) {
             for (MancalaPit pit : this.getPits(player)) {
                 pit.setStones(startingStones);
