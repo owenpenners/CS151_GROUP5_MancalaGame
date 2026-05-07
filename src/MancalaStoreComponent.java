@@ -1,3 +1,7 @@
+/**
+ * @author Owen Penners
+ */
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -5,6 +9,11 @@ public class MancalaStoreComponent extends JPanel {
     private int stones;
     private BoardDisplayStrategy strategy;
 
+    /**
+     * Create a MancalaStoreComponent
+     * @param stones number of stones associated with this MancalaStore
+     * @param strategy
+     */
     public MancalaStoreComponent(int stones, BoardDisplayStrategy strategy) {
         this.stones = stones;
         this.strategy = strategy;

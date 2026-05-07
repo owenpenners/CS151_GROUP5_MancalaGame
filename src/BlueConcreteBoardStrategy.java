@@ -1,8 +1,20 @@
+/**
+ * Implements a new BoardDisplayStrategy in which pits are blue diamonds and
+ * mancalas are blue rounded rectangles.
+ * @author Owen Penners
+ */
+
 import java.awt.*;
 import java.awt.geom.Path2D;
 
 public class BlueConcreteBoardStrategy implements BoardDisplayStrategy{
     private final Color BACKGROUND_COLOR = new Color(49, 105, 168);
+
+    /**
+     * Paints the pits with blue diamonds
+     * @param g2 Graphics2D context
+     * @param pit PitButton to paint
+     */
     @Override
     public void paintPit(Graphics2D g2, PitButton pit) {
         configurePitButton(pit);
@@ -32,6 +44,11 @@ public class BlueConcreteBoardStrategy implements BoardDisplayStrategy{
 
     }
 
+    /**
+     * Paints the stores as round blue rectangles
+     * @param g2 Graphics2D context
+     * @param store Store to paint
+     */
     @Override
     public void paintStore(Graphics2D g2, MancalaStoreComponent store) {
         g2.setColor(BACKGROUND_COLOR);

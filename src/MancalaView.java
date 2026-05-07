@@ -1,11 +1,13 @@
+/**
+ * @author Owen Penners
+ * @author Quan Tang
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-/**
- *
- */
 public class MancalaView extends JFrame {
     private final String[] STYLES = {"Default Board", "Color Board", "Blue Board"};
     private final BoardDisplayStrategy DEFAULT_STRATEGY = new DefaultConcreteBoardStrategy();
@@ -72,7 +74,7 @@ public class MancalaView extends JFrame {
      * Create a panel that represents a mancala
      * @param title - The title of the mancala
      * @param stones - The number of stones in the store
-     * @return a JPanel with a JLabel and a border displaying number of stones and title
+     * @return a JPanel with a MancalaStoreComponent and a border displaying number of stones and title
      */
     private JPanel createStorePanel(String title, int stones, boolean isPlayer1) {
         JPanel storePanel = new JPanel(new BorderLayout());
@@ -140,7 +142,7 @@ public class MancalaView extends JFrame {
     }
 
     /**
-     *
+     * Add listener
      * @param listener
      */
     public void addUndoListener(ActionListener listener) {
@@ -148,7 +150,7 @@ public class MancalaView extends JFrame {
     }
 
     /**
-     *
+     * Add listener
      * @param listener
      */
     public void addNewGameListener(ActionListener listener) {
@@ -156,7 +158,7 @@ public class MancalaView extends JFrame {
     }
 
     /**
-     *
+     * Add listener
      * @param listener
      */
     public void addStyleChoiceComboBoxListener(ActionListener listener) {styleChoiceComboBox.addActionListener(listener);}

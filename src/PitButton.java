@@ -1,3 +1,8 @@
+/**
+ * Implement a PitButton class which acts as a pit for the view
+ * @author Owen Penners
+ */
+
 import javax.swing.*;
 import java.awt.*;
 

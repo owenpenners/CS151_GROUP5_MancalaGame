@@ -1,6 +1,16 @@
+/**
+ * Implements the default basic mancala BoardDisplayStrategy
+ * @author Owen Penners
+ */
+
 import java.awt.*;
 
 public class DefaultConcreteBoardStrategy implements BoardDisplayStrategy{
+    /**
+     * Paints PitButton according to graphics context
+     * @param g2 Graphics2D context
+     * @param pit PitButton to paint
+     */
     @Override
     public void paintPit(Graphics2D g2, PitButton pit) {
         configurePitButton(pit);
@@ -11,6 +21,11 @@ public class DefaultConcreteBoardStrategy implements BoardDisplayStrategy{
         drawStones(g2, pit.getStones(), pit.getWidth(), pit.getHeight());
     }
 
+    /**
+     * Paints Mancala Store according to graphics context
+     * @param g2 Graphics2D context
+     * @param store MancalaStoreComponent to paint
+     */
     @Override
     public void paintStore(Graphics2D g2, MancalaStoreComponent store) {
         drawStones(g2, store.getStones(), store.getWidth(), store.getHeight());
@@ -24,6 +39,13 @@ public class DefaultConcreteBoardStrategy implements BoardDisplayStrategy{
         pit.setOpaque(true);
     }
 
+    /**
+     * Draws a certain amount of stones
+     * @param g2
+     * @param stones
+     * @param width
+     * @param height
+     */
     private void drawStones(Graphics2D g2, int stones, int width,  int height) {
         if(stones == 0) return;
 

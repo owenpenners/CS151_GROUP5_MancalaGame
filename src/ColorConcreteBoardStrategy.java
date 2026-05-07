@@ -1,7 +1,16 @@
+/**
+ * Implements a colored in mancala BoardDisplayStrategy
+ * @author Owen Penners
+ */
 import java.awt.*;
 
 public class ColorConcreteBoardStrategy implements BoardDisplayStrategy{
     private final Color BACKGROUND_COLOR = new Color(225, 220, 160);
+    /**
+     * Paints PitButton according to graphics context
+     * @param g2 Graphics2D context
+     * @param pit PitButton to paint
+     */
     @Override
     public void paintPit(Graphics2D g2, PitButton pit) {
         configurePitButton(pit);
@@ -17,6 +26,11 @@ public class ColorConcreteBoardStrategy implements BoardDisplayStrategy{
 
         drawStones(g2, pit.getStones(), pit.getWidth(), pit.getHeight(), Color.ORANGE);
     }
+    /**
+     * Paints Mancala Store according to graphics context
+     * @param g2 Graphics2D context
+     * @param store MancalaStoreComponent to paint
+     */
     @Override
     public void paintStore(Graphics2D g2, MancalaStoreComponent store) {
         g2.setColor(BACKGROUND_COLOR);

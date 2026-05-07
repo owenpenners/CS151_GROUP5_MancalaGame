@@ -1,3 +1,8 @@
+/**
+ * @author Quan Tang
+ * @author Owen Penners
+ * @author Hein Lin Htet
+ */
 public class MancalaTest {
     public static void main(String[] args){
         MancalaModel model = new MancalaModel();

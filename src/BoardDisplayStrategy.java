@@ -1,3 +1,8 @@
+/**
+ * Defines a BoardDisplayStrategy interface
+ * @author Owen Penners
+ */
+
 import java.awt.*;
 
 public interface BoardDisplayStrategy {

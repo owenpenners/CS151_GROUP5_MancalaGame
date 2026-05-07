@@ -1,3 +1,9 @@
+/**
+ * @author Hein lin Htet
+ * @author Quan Tang
+ * @author Owen Penners
+ */
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
@@ -36,13 +42,9 @@ public class MancalaController implements ChangeListener {
     }
 
     /**
-     *
+     * Attach a listener to a PitButton
      */
     public void attachPitListeners() {
-        // Future work:
-        // - Attach listeners to pit buttons
-        // - Handle user clicks
-        // - Update the view after each move
         this.view.addPitListeners(e -> {
             PitButton b = (PitButton) e.getSource();
             String p = b.getPlayer();
